@@ -1,0 +1,157 @@
+
+.outer {
+  margin: 0 auto;
+  height: 100vh;
+  width: 50%;
+
+  border-left: 2px solid;
+  border-right: 2px solid;
+}
+
+.bar {
+  background-color: lightslategray;
+  /* font-size: 1.5em; */
+  font-weight: bolder;
+
+  padding: 4px 0;
+}
+
+.bar > ul {
+  list-style-type: none;
+  display: flex;
+
+  justify-content: space-between;
+  width: auto;
+
+  padding: 0 5px;
+
+  #title {
+    font-size: 1.5em;
+  }
+
+  :not(#title) {
+    font-size: 15px;
+    font-weight: 100;
+    align-self: center;
+  }
+}
+
+.area {
+  display: flex;
+  justify-content: space-evenly;
+
+  height: 300px;
+  padding: 10px;
+
+  border-bottom: 2px solid;
+}
+
+.game {
+  top: 3em;
+  max-width: min-content;
+  align-self: center;
+
+  margin-left: 2em;
+}
+
+.game > p {
+  width: auto;
+  height: 3em;
+
+  margin-top: 10px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, calc(10em / 3));
+  grid-template-rows: repeat(3, calc(10em / 3));
+
+  border: solid;
+
+  height: 10em;
+  width: 10em;
+}
+
+.game-history {
+  border: solid;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  align-self: center;
+
+  margin-bottom: 10px;
+  height: 6em;
+  width: 6em;
+  overflow-y: scroll;
+
+  scrollbar-width: thin;
+}
+
+.previous-move {
+  text-decoration: underline;
+  cursor: pointer;
+  color: rgb(9, 87, 116);
+}
+
+.board > button {
+  border: 1px solid;
+  font-size: 2em;
+
+  background-color: aliceblue;
+}
+
+.previous-games {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > span {
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+
+  > ul {
+    border: solid;
+    padding: 0;
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+
+    > li {
+      list-style-type: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      gap: 10px;
+
+      > .delete {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+
+        cursor: pointer;
+        background-color: red;
+      }
+
+      > .game-id {
+        cursor: pointer;
+        color: rgb(9, 87, 116);      
+      }
+    }
+
+    > li:hover {
+      background-color: lightgray;
+      transition: background-color 0.05s linear;
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5em;
+}
