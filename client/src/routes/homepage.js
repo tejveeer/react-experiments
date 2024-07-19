@@ -19,6 +19,9 @@ const Homepage = () => {
           <li>
             <Link to="/experiment">/experiment</Link>
           </li>
+          <li>
+            <Link to="/calculator">/calculator</Link>
+          </li>
         </ul>
       </div>
     </div>

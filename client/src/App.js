@@ -9,6 +9,7 @@ import { useState } from "react";
 import { UserContext } from "./contexts/UserContext";
 import Cookies from "js-cookie";
 import Homepage from "./routes/homepage";
+import Calculator from "./routes/calculator";
 
 const App = () => {
   const [user, setUser] = useState(() => {
@@ -37,6 +38,10 @@ const App = () => {
         <Route
           path="/experiment"
           element={!user.name ? <Navigate to="/login" /> : <Experiment />}
+        ></Route>
+        <Route
+          path="/calculator"
+          element={!user.name ? <Navigate to="/login" /> : <Calculator />}
         ></Route>
       </Routes>
     </UserContext.Provider>

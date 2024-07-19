@@ -11,7 +11,7 @@ body {
   height: 100vh;
 }
 
-form {
+.parent > form {
   display: flex;
   flex-direction: column;
   padding: 1em;
@@ -19,7 +19,7 @@ form {
   border: 2px solid black;
 }
 
-input {
+.parent > form > input {
   margin-bottom: 10px;
 }
 
