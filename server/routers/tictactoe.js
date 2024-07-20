@@ -64,7 +64,7 @@ router.get("/get-histories", async (req, res) => {
     res.status(200).send(result.map((val) => [val["id"], val["game_history"]]));
   } catch (error) {
     res.status(400);
-  }
+  } 
 });
 
 module.exports = router;
