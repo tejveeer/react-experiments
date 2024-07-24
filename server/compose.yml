@@ -1,0 +1,15 @@
+services:
+  database:
+    container_name: test-database
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=tejveer
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=test
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+volumes:
+  postgres_data:
