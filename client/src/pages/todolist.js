@@ -22,7 +22,7 @@ const Search = () => {
 
   return (
     <input
-      className='w-[50%] text-[1rem] p-1 border-solid'
+      className='w-[50%] border-solid p-1 text-[1rem] enabled:rounded-none'
       onChange={onChange}
       onFocus={() => {
         setContent('');
@@ -38,20 +38,40 @@ const Search = () => {
 
 const getRestrictedString = (string, N) => {};
 
-const Task = ({ id, name, description, days, time, deleteTask, isLast }) => {
+const Task = ({
+  id,
+  name,
+  description,
+  days,
+  deleteTask,
+  isLast,
+  taskLength,
+}) => {
+  const addBottomBorder = !isLast || (isLast && taskLength <= 3);
   return (
     <div
       className={`flex gap-2 p-2 ${
-        !isLast ? 'border-solid border-t-0 border-x-0' : ''
-      } hover:bg-slate-50 hover:cursor-pointer text-[1.2rem]`}
+        addBottomBorder ? 'border-x-0 border-t-0 border-solid' : ''
+      } text-[1.2rem] hover:cursor-pointer hover:bg-slate-50`}
     >
       <div className='w-[80%]'>
-        <h3 className='m-0 text-gray-500 border-solid border-t-0 border-x-0 border-red-400 border'>
+        <h3 className='m-0 border border-x-0 border-t-0 border-solid border-red-400 text-gray-500'>
           {name}
         </h3>
-        <p className='text-[12px] h-[2rem] overflow-hidden'>{description}</p>
+        <p className='h-[2rem] text-[12px]'>{description}</p>
       </div>
-      <div className='w-[10%] border-solid'></div>
+      <div className='grid w-[10%] grid-cols-2 p-1 text-[0.7rem] font-bold'>
+        {['M', 'T', 'W', 'Th', 'F', 'S', 'Su'].map((day, idx) => {
+          const color = days[idx] ? 'text-green-500' : 'text-red-500';
+          if (idx !== 6) {
+            return <div className={color}>{day}</div>;
+          }
+          return <div className={`${color} col-span-2 text-center`}>{day}</div>;
+        })}
+      </div>
+      <div className='relative flex h-[20px] w-[20px] items-center justify-center self-center rounded-[50%] bg-red-400 hover:bg-red-500'>
+        <div className='h-[3px] w-[70%] bg-white'></div>
+      </div>
     </div>
   );
 };
@@ -60,12 +80,12 @@ const Tasks = () => {
   const { tasks, setTasks, searchedTasks, setSearchedTasks } =
     useContext(TaskContext);
 
-  console.log(searchedTasks);
-  const tasksToDisplay = searchedTasks.length ? searchedTasks : tasks;
-  const deleteTask = () => {};
+  const tasksToDisplay = searchedTasks.length !== 0 ? searchedTasks : tasks;
+  // implement this when the db is setup; need id to delete
+  const deleteTask = (id) => {};
 
   return (
-    <div className='overflow-hidden overflow-y-scroll scrollbar-thin box-border rounded-lg w-[80%] h-[20rem] border-solid'>
+    <div className='overflow scrollbar-thin box-border h-[25.3rem] w-[80%] overflow-y-scroll rounded-lg border-solid'>
       {tasksToDisplay.map((task, idx) => (
         <Task
           id={idx}
@@ -75,6 +95,7 @@ const Tasks = () => {
           time={task.time}
           deleteTask={deleteTask}
           isLast={idx + 1 === tasksToDisplay.length}
+          taskLength={tasksToDisplay.length}
         />
       ))}
     </div>
@@ -82,35 +103,76 @@ const Tasks = () => {
 };
 
 // components relating to adding/editing tasks
-const TaskModal = ({ operation }) => {};
-const TaskViewScreen = ({ operation }) => {};
+const TaskModal = () => {};
+const TaskViewScreen = () => {
+  const { setLoadViewingScreen } = useContext(TaskContext);
+  return (
+    <div
+      className='absolute h-screen w-screen backdrop-blur-[30px]'
+      onClick={() => setLoadViewingScreen(false)}
+    ></div>
+  );
+};
 
-const AddTaskButton = () => {};
+const AddTaskButton = () => {
+  const { setLoadViewingScreen, setOperation } = useContext(TaskContext);
+
+  return (
+    <div
+      className='relative right-[11rem] flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-green-400 hover:cursor-pointer hover:bg-green-500'
+      onClick={() => {
+        setLoadViewingScreen(true);
+        setOperation('add');
+      }}
+    >
+      <div className='h-[15%] w-[60%] bg-white'></div>
+      <div className='absolute h-[15%] w-[60%] rotate-90 bg-white'></div>
+    </div>
+  );
+};
+
+const choose = (choices) => {
+  const index = Math.floor(Math.random() * choices.length);
+  return choices[index];
+};
 
 const TodoApp = () => {
   // [{ name, description, days, time }, ...]
   const [tasks, setTasks] = useState(() => {
     let tasks = [];
-    for (let i = 0; i <= 10; i++) {
+    for (let i = 0; i < 5; i++) {
       tasks.push({
         name: generate(2).join(' '),
         description: generate({ min: 5, max: 10 }).join(' '),
-        days: [],
+        days: Array(7)
+          .fill(null)
+          .map(() => choose([true, false])),
         time: '',
       });
     }
     return tasks;
   });
   const [searchedTasks, setSearchedTasks] = useState([]);
+  const [loadViewingScreen, setLoadViewingScreen] = useState(false);
+  const [operation, setOperation] = useState(null);
 
   return (
     <TaskContext.Provider
-      value={{ tasks, setTasks, searchedTasks, setSearchedTasks }}
+      value={{
+        tasks,
+        setTasks,
+        searchedTasks,
+        setSearchedTasks,
+        setLoadViewingScreen,
+        operation,
+        setOperation,
+      }}
     >
-      <div className='flex flex-col justify-center gap-2 items-center mx-auto w-[30rem] h-screen'>
+      <div className='mx-auto flex h-screen w-[30rem] flex-col items-center justify-center gap-2'>
         <Search />
         <Tasks />
         <AddTaskButton />
+        {loadViewingScreen && <TaskViewScreen />}
       </div>
     </TaskContext.Provider>
   );
