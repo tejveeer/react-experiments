@@ -22,16 +22,10 @@ const Search = () => {
 
   return (
     <input
-      className='w-[50%] border-solid p-1 text-[1rem] enabled:rounded-none'
+      className='focus:border-blue-500 focus:outline-double outline-none w-[50%] border-solid p-1 text-[1rem] enabled:rounded-none'
       onChange={onChange}
-      onFocus={() => {
-        setContent('');
-        setSearchedTasks('');
-      }}
-      onBlur={(e) => {
-        if (e.target.value === '') setContent('Search');
-      }}
       value={content}
+      placeholder='Search'
     ></input>
   );
 };
@@ -103,14 +97,33 @@ const Tasks = () => {
 };
 
 // components relating to adding/editing tasks
-const TaskModal = () => {};
 const TaskViewScreen = () => {
   const { setLoadViewingScreen } = useContext(TaskContext);
   return (
-    <div
-      className='absolute h-screen w-screen backdrop-blur-[30px]'
-      onClick={() => setLoadViewingScreen(false)}
-    ></div>
+    <div className='flex justify-center items-center absolute h-screen w-screen backdrop-blur-[30px]'>
+      <div
+        className='absolute h-screen w-screen'
+        onClick={() => setLoadViewingScreen(false)}
+      ></div>
+      <div className='flex flex-col gap-2 p-6 rounded-sm z-10 bg-slate-300'>
+        <input
+          spellcheck='false'
+          className='focus:border-solid focus:border-blue-500 text-[1rem] p-1 rounded-md text-slate-500 font-bold outline-none border-none'
+        ></input>
+        <textarea
+          spellcheck='false'
+          className='p-2 rounded-md border-none resize-none outline-none h-[10rem]'
+        ></textarea>
+        <div className='flex self-center'>
+          {['M', 'T', 'W', 'Th', 'F', 'S', 'Su'].map((day) => (
+            <div className='flex flex-column justify-center max-w-min flex-wrap'>
+              <input type='checkbox'></input>
+              <div className='text-[14px] font-mono'>{day}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
