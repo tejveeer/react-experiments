@@ -98,7 +98,9 @@ const Tasks = () => {
 
 // components relating to adding/editing tasks
 const TaskViewScreen = () => {
-  const { setLoadViewingScreen } = useContext(TaskContext);
+  const { operation, setLoadViewingScreen } = useContext(TaskContext);
+  const [repeating, setRepeating] = useState(false);
+
   return (
     <div className='flex justify-center items-center absolute h-screen w-screen backdrop-blur-[30px]'>
       <div
@@ -108,7 +110,7 @@ const TaskViewScreen = () => {
       <div className='flex flex-col gap-2 p-6 rounded-sm z-10 bg-slate-300'>
         <input
           spellcheck='false'
-          className='focus:border-solid focus:border-blue-500 text-[1rem] p-1 rounded-md text-slate-500 font-bold outline-none border-none'
+          className='border-solid border-transparent focus:border-solid focus:border-blue-500 text-[1rem] p-1 rounded-md text-slate-500 font-bold outline-none'
         ></input>
         <textarea
           spellcheck='false'
@@ -121,6 +123,20 @@ const TaskViewScreen = () => {
               <div className='text-[14px] font-mono'>{day}</div>
             </div>
           ))}
+        </div>
+        <div className='self-center'>
+          <div>
+            <button
+              className={`p-[0.37rem] ${repeating ? 'bg-slate-400' : 'bg-white'} hover:bg-slate-200 font-bold rounded-l-full border-none`}
+              onClick={() => setRepeating(!repeating)}
+            >
+              R
+            </button>
+            <input
+              type='time'
+              className='p-1 rounded-r-full border-none border-gray-300 focus:outline-none focus:ring-blue-500'
+            ></input>
+          </div>
         </div>
       </div>
     </div>
