@@ -14,8 +14,8 @@ const Search = () => {
 
     setSearchedTasks(
       tasks.filter((task) => {
-        console.log(task.name);
-        return task.name.includes(value);
+        console.log(task.title);
+        return task.title.includes(value);
       }),
     );
   };
@@ -24,7 +24,6 @@ const Search = () => {
     <input
       className='focus:border-blue-500 focus:outline-double outline-none w-[50%] border-solid p-1 text-[1rem] enabled:rounded-none'
       onChange={onChange}
-      value={content}
       placeholder='Search'
     ></input>
   );
@@ -34,23 +33,43 @@ const getRestrictedString = (string, N) => {};
 
 const Task = ({
   id,
-  name,
+  title,
   description,
   days,
+  time,
+  repeating,
   deleteTask,
   isLast,
   taskLength,
 }) => {
+  const { setOperation, setLoadViewingScreen } = useContext(TaskContext);
+
   const addBottomBorder = !isLast || (isLast && taskLength <= 3);
+  const onDoubleClick = () => {
+    setLoadViewingScreen(true);
+    setOperation({
+      type: 'edit',
+      props: {
+        id,
+        title,
+        description,
+        days,
+        time,
+        repeating,
+      },
+    });
+  };
+
   return (
     <div
       className={`flex gap-2 p-2 ${
         addBottomBorder ? 'border-x-0 border-t-0 border-solid' : ''
       } text-[1.2rem] hover:cursor-pointer hover:bg-slate-50`}
+      onDoubleClick={onDoubleClick}
     >
       <div className='w-[80%]'>
         <h3 className='m-0 border border-x-0 border-t-0 border-solid border-red-400 text-gray-500'>
-          {name}
+          {title}
         </h3>
         <p className='h-[2rem] text-[12px]'>{description}</p>
       </div>
@@ -83,10 +102,11 @@ const Tasks = () => {
       {tasksToDisplay.map((task, idx) => (
         <Task
           id={idx}
-          name={task.name}
+          title={task.title}
           description={task.description}
           days={task.days}
           time={task.time}
+          repeating={task.repeating}
           deleteTask={deleteTask}
           isLast={idx + 1 === tasksToDisplay.length}
           taskLength={tasksToDisplay.length}
@@ -99,10 +119,23 @@ const Tasks = () => {
 // components relating to adding/editing tasks
 const TaskViewScreen = () => {
   const { operation, setLoadViewingScreen } = useContext(TaskContext);
-  const [repeating, setRepeating] = useState(false);
+  const setFromOperation = (key, def) => () => operation.props[key] || def;
+
+  const [title, setTitle] = useState(setFromOperation('title', ''));
+  const [description, setDescription] = useState(
+    setFromOperation('description', ''),
+  );
+  const [days, setDays] = useState(
+    setFromOperation('days', [false, false, false, false, false, false, false]),
+  );
+  const [time, setTime] = useState(setFromOperation('time', ''));
+  const [repeating, setRepeating] = useState(
+    setFromOperation('repeating', false),
+  );
 
   return (
-    <div className='flex justify-center items-center absolute h-screen w-screen backdrop-blur-[30px]'>
+    // here
+    <div className='flex flex-col justify-center items-center absolute h-screen w-screen backdrop-blur-[30px]'>
       <div
         className='absolute h-screen w-screen'
         onClick={() => setLoadViewingScreen(false)}
@@ -111,15 +144,27 @@ const TaskViewScreen = () => {
         <input
           spellcheck='false'
           className='border-solid border-transparent focus:border-solid focus:border-blue-500 text-[1rem] p-1 rounded-md text-slate-500 font-bold outline-none'
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
         ></input>
         <textarea
           spellcheck='false'
           className='p-2 rounded-md border-none resize-none outline-none h-[10rem]'
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
         ></textarea>
         <div className='flex self-center'>
-          {['M', 'T', 'W', 'Th', 'F', 'S', 'Su'].map((day) => (
+          {['M', 'T', 'W', 'Th', 'F', 'S', 'Su'].map((day, idx) => (
             <div className='flex flex-column justify-center max-w-min flex-wrap'>
-              <input type='checkbox'></input>
+              <input
+                type='checkbox'
+                onChange={() => {
+                  let newDays = [...days];
+                  newDays[idx] = !days[idx];
+                  setDays(newDays);
+                }}
+                checked={days[idx]}
+              ></input>
               <div className='text-[14px] font-mono'>{day}</div>
             </div>
           ))}
@@ -135,10 +180,15 @@ const TaskViewScreen = () => {
             <input
               type='time'
               className='p-1 rounded-r-full border-none border-gray-300 focus:outline-none focus:ring-blue-500'
-            ></input>
+              onChange={(e) => setTime(e.target.value)}
+              value={time}
+            />
           </div>
         </div>
       </div>
+      <button className='relative border-none rounded-md bg-orange-300 hover:bg-orange-400 cursor-pointer text-white font-bold w-[4rem] p-1 right-[6.5rem] top-2 z-10'>
+        {operation.type[0].toUpperCase() + operation.type.substr(1)}
+      </button>
     </div>
   );
 };
@@ -151,7 +201,10 @@ const AddTaskButton = () => {
       className='relative right-[11rem] flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-green-400 hover:cursor-pointer hover:bg-green-500'
       onClick={() => {
         setLoadViewingScreen(true);
-        setOperation('add');
+        setOperation({
+          type: 'add',
+          props: {},
+        });
       }}
     >
       <div className='h-[15%] w-[60%] bg-white'></div>
@@ -166,24 +219,28 @@ const choose = (choices) => {
 };
 
 const TodoApp = () => {
-  // [{ name, description, days, time }, ...]
+  // [{ title, description, days, time }, ...]
   const [tasks, setTasks] = useState(() => {
     let tasks = [];
     for (let i = 0; i < 5; i++) {
       tasks.push({
-        name: generate(2).join(' '),
+        title: generate(2).join(' '),
         description: generate({ min: 5, max: 10 }).join(' '),
         days: Array(7)
           .fill(null)
           .map(() => choose([true, false])),
-        time: '',
+        time: '09:00',
+        repeating: choose([true, false]),
       });
     }
     return tasks;
   });
   const [searchedTasks, setSearchedTasks] = useState([]);
   const [loadViewingScreen, setLoadViewingScreen] = useState(false);
-  const [operation, setOperation] = useState(null);
+  const [operation, setOperation] = useState({
+    type: null,
+    props: {},
+  });
 
   return (
     <TaskContext.Provider
