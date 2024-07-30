@@ -1,8 +1,9 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TaskContext } from '../contexts/TaskContext';
 import { generate } from 'random-words';
 
 import '../styles/scrollbar.css';
+import axios from 'axios';
 
 const Search = () => {
   const [content, setContent] = useState('Search');
@@ -29,8 +30,7 @@ const Search = () => {
   );
 };
 
-const getRestrictedString = (string, N) => {};
-
+// const getRestrictedString = (string, N) => {};
 const Task = ({
   id,
   title,
@@ -82,11 +82,18 @@ const Task = ({
           return <div className={`${color} col-span-2 text-center`}>{day}</div>;
         })}
       </div>
-      <div className='relative flex h-[20px] w-[20px] items-center justify-center self-center rounded-[50%] bg-red-400 hover:bg-red-500'>
+      <div
+        className='relative flex h-[20px] w-[20px] items-center justify-center self-center rounded-[50%] bg-red-400 hover:bg-red-500'
+        onClick={() => deleteTask(id)}
+      >
         <div className='h-[3px] w-[70%] bg-white'></div>
       </div>
     </div>
   );
+};
+
+const removeItemWithId = (arr, id) => {
+  return arr.filter((it) => it.id !== id);
 };
 
 const Tasks = () => {
@@ -95,13 +102,22 @@ const Tasks = () => {
 
   const tasksToDisplay = searchedTasks.length !== 0 ? searchedTasks : tasks;
   // implement this when the db is setup; need id to delete
-  const deleteTask = (id) => {};
+  const deleteTask = async (id) => {
+    await axios.post(
+      'http://localhost:2500/todolist/delete-task',
+      { id },
+      { withCredentials: true },
+    );
+
+    setTasks(removeItemWithId(tasks, id));
+    setSearchedTasks(removeItemWithId(searchedTasks, id));
+  };
 
   return (
     <div className='overflow scrollbar-thin box-border h-[25.3rem] w-[80%] overflow-y-scroll rounded-lg border-solid'>
       {tasksToDisplay.map((task, idx) => (
         <Task
-          id={idx}
+          id={task.id}
           title={task.title}
           description={task.description}
           days={task.days}
@@ -118,9 +134,11 @@ const Tasks = () => {
 
 // components relating to adding/editing tasks
 const TaskViewScreen = () => {
-  const { operation, setLoadViewingScreen } = useContext(TaskContext);
+  const { operation, setLoadViewingScreen, tasks, setTasks } =
+    useContext(TaskContext);
   const setFromOperation = (key, def) => () => operation.props[key] || def;
 
+  const id = operation.props?.id;
   const [title, setTitle] = useState(setFromOperation('title', ''));
   const [description, setDescription] = useState(
     setFromOperation('description', ''),
@@ -132,6 +150,35 @@ const TaskViewScreen = () => {
   const [repeating, setRepeating] = useState(
     setFromOperation('repeating', false),
   );
+
+  const sendToServer = async () => {
+    if (operation.type === 'edit') {
+      const task = { id, title, description, days, time, repeating };
+      await axios
+        .put('http://localhost:2500/todolist/change-task', task, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setTasks([...removeItemWithId(tasks, id), task]);
+            setLoadViewingScreen(false);
+          }
+        });
+    } else if (operation.type === 'add') {
+      const task = { title, description, days, time, repeating };
+      await axios
+        .post('http://localhost:2500/todolist/add-task', task, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            const id = res.data.id;
+            setTasks([...tasks, { id, ...task }]);
+            setLoadViewingScreen(false);
+          }
+        });
+    }
+  };
 
   return (
     // here
@@ -172,7 +219,7 @@ const TaskViewScreen = () => {
         <div className='self-center'>
           <div>
             <button
-              className={`p-[0.37rem] ${repeating ? 'bg-slate-400' : 'bg-white'} hover:bg-slate-200 font-bold rounded-l-full border-none`}
+              className={`p-[0.26rem] ${repeating ? 'bg-slate-400' : 'bg-white'} hover:bg-slate-200 font-bold rounded-l-full border-none`}
               onClick={() => setRepeating(!repeating)}
             >
               R
@@ -186,7 +233,10 @@ const TaskViewScreen = () => {
           </div>
         </div>
       </div>
-      <button className='relative border-none rounded-md bg-orange-300 hover:bg-orange-400 cursor-pointer text-white font-bold w-[4rem] p-1 right-[6.5rem] top-2 z-10'>
+      <button
+        className='relative border-none rounded-md bg-orange-300 hover:bg-orange-400 cursor-pointer text-white font-bold w-[4rem] p-1 right-[6rem] top-2 z-10'
+        onClick={sendToServer}
+      >
         {operation.type[0].toUpperCase() + operation.type.substr(1)}
       </button>
     </div>
@@ -213,28 +263,31 @@ const AddTaskButton = () => {
   );
 };
 
-const choose = (choices) => {
-  const index = Math.floor(Math.random() * choices.length);
-  return choices[index];
-};
-
 const TodoApp = () => {
   // [{ title, description, days, time }, ...]
-  const [tasks, setTasks] = useState(() => {
-    let tasks = [];
-    for (let i = 0; i < 5; i++) {
-      tasks.push({
-        title: generate(2).join(' '),
-        description: generate({ min: 5, max: 10 }).join(' '),
-        days: Array(7)
-          .fill(null)
-          .map(() => choose([true, false])),
-        time: '09:00',
-        repeating: choose([true, false]),
-      });
-    }
-    return tasks;
-  });
+  const [tasks, setTasks] = useState([]);
+  useEffect(() => {
+    axios
+      .get('http://localhost:2500/todolist/', { withCredentials: true })
+      .then((res) => res.data)
+      .then((tasks) => {
+        setTasks(
+          tasks.map((task) => {
+            const {
+              id,
+              title,
+              description,
+              days,
+              repeating_time: time,
+              repeating,
+            } = task;
+            return { id, title, description, days, time, repeating };
+          }),
+        );
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   const [searchedTasks, setSearchedTasks] = useState([]);
   const [loadViewingScreen, setLoadViewingScreen] = useState(false);
   const [operation, setOperation] = useState({
