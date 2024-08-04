@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// asked chatgpt about this
 const Experiment = () => {
   const [isBottom, setIsBottom] = useState(false);
   const scrollRef = useRef(null);

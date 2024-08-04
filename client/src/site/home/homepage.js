@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { UserContext } from '../contexts/UserContext';
+import { UserContext } from '../utils/UserContext';
 import { Link } from 'react-router-dom';
 
-import '../styles/homepage.css';
+import './homepage.css';
 
 const Homepage = () => {
   const { user } = useContext(UserContext);
@@ -30,4 +30,5 @@ const Homepage = () => {
     </div>
   );
 };
+
 export default Homepage;
