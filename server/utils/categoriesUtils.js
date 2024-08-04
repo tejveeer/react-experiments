@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../../client/src/categories') + '/';
-const ABS_AUTH_PATH = path.resolve(
+const AUTH_PATH = path.resolve(
   __dirname,
-  '../../client/src/site/authentication',
+  '../../client/src/site/',
 );
 
 function _isPathFolder(path) {
@@ -141,7 +141,7 @@ function _getImportablePaths(root) {
 
 function getImportablePaths() {
   return _getImportablePaths(ROOT).map((absFilePath) =>
-    path.relative(ABS_AUTH_PATH, absFilePath),
+    path.relative(AUTH_PATH, absFilePath),
   );
 }
 

@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
+const categoriesInspectorsRouter = require('./routers/categoryInspectors');
 const authenticationRouter = require('./routers/authentication');
 const tictactoeRouter = require('./routers/tictactoe');
 const todoListRouter = require('./routers/todolist');
@@ -22,5 +23,6 @@ app.use(cookieParser());
 app.use('/', authenticationRouter);
 app.use('/tictactoe', tictactoeRouter);
 app.use('/todolist', todoListRouter);
+app.use('/categories', categoriesInspectorsRouter);
 
 app.listen(2500);
