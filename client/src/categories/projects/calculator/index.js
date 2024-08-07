@@ -41,7 +41,7 @@ const Calculator = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center box-border mx-auto w-[20rem] h-screen">
+    <div className="flex flex-col justify-center box-border mx-auto w-[20rem] h-full">
       <div className="overflow-hidden grid gap-1 grid-cols-4 grid-rows-6 mx-0 h-[30rem] border-solid border-[4px] rounded-3xl">
         <div className="text-[2.3rem] pr-1 flex flex-col justify-between text-right relative col-span-4 bg-gray-400">
           <div className="font-normal italic pt-2 text-[1rem] w-[97%] h-[20%]">

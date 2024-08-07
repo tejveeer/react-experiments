@@ -6,17 +6,10 @@ import Homepage from './home/homepage';
 import Login from './authentication/login';
 import Register from './authentication/register';
 import Main from './authentication/mainpage';
+import Navbar from './Navbar';
 
+import { getImportablePaths } from './utils/categoriesUtils';
 import Cookies from 'js-cookie';
-import axios from 'axios';
-
-const getImportablePaths = async () => {
-  const { data } = await axios.get(
-    'http://localhost:2500/categories/importable-paths',
-  );
-
-  return data.map((path) => path.split('../categories/')[1]);
-};
 
 const useDynamicallyGeneratedRoutes = () => {
   const [components, setComponents] = useState([<></>]);
@@ -72,26 +65,31 @@ const App = () => {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <Routes>
-        <Route
-          path='/'
-          element={<Main />}
-        ></Route>
-        <Route
-          path='/login'
-          element={!user.name ? <Login /> : <Navigate to='/homepage' />}
-        ></Route>
-        <Route
-          path='/register'
-          element={!user.name ? <Register /> : <Navigate to='/homepage' />}
-        ></Route>
-        <Route
-          path='/homepage'
-          element={!user.name ? <Navigate to='/login' /> : <Homepage />}
-        ></Route>
-        {/* Protected routes */}
-        {routes}
-      </Routes>
+      <div className='h-full flex flex-col'>
+        <Navbar />
+        <div className='flex-grow'>
+          <Routes>
+            <Route
+              path='/'
+              element={<Main />}
+            ></Route>
+            <Route
+              path='/login'
+              element={!user.name ? <Login /> : <Navigate to='/homepage' />}
+            ></Route>
+            <Route
+              path='/register'
+              element={!user.name ? <Register /> : <Navigate to='/homepage' />}
+            ></Route>
+            <Route
+              path='/homepage'
+              element={!user.name ? <Navigate to='/login' /> : <Homepage />}
+            ></Route>
+            {/* Protected routes */}
+            {routes}
+          </Routes>
+        </div>
+      </div>
     </UserContext.Provider>
   );
 };

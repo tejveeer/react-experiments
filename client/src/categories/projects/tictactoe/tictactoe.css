@@ -1,13 +1,4 @@
 
-.outer {
-  margin: 0 auto;
-  height: 100vh;
-  width: 50%;
-
-  border-left: 2px solid;
-  border-right: 2px solid;
-}
-
 .bar {
   background-color: lightslategray;
   /* font-size: 1.5em; */

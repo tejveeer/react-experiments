@@ -230,14 +230,6 @@ const TicTacToe = () => {
   return (
     <>
       <div className='outer'>
-        <div className='bar'>
-          <ul>
-            <li id='title'>TicTacToe</li>
-            <li>
-              <Link to='/homepage'>Homepage</Link>
-            </li>
-          </ul>
-        </div>
         <div className='area'>
           <div className='game'>
             <div className='board'>

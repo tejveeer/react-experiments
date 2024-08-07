@@ -3,8 +3,8 @@ import './mainpage.css';
 
 const Main = () => {
   return (
-    <div class='mainpage-parent'>
-      <div id='label'>Experiments</div>
+    <div class='min-h-full flex flex-col items-center justify-center'>
+      <div id='label' className='text-xl mb-4'>Experiments</div>
       <Link
         to='/login'
         id='mainpage-link'
