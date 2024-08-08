@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
-import { TaskContext } from './TaskContext';
+import { useContext, useEffect, useState } from "react";
+import { TaskContext } from "./TaskContext";
 
-import axios from 'axios';
-import './scrollbar.css';
+import axios from "axios";
+import "./scrollbar.css";
 
 const Search = () => {
-  const [content, setContent] = useState('Search');
+  const [content, setContent] = useState("Search");
   const { tasks, setSearchedTasks } = useContext(TaskContext);
 
   const onChange = (e) => {
@@ -22,9 +22,9 @@ const Search = () => {
 
   return (
     <input
-      className='focus:border-blue-500 focus:outline-double outline-none w-[50%] border-solid p-1 text-[1rem] enabled:rounded-none'
+      className="w-[50%] border-solid p-1 text-[1rem] outline-none focus:border-blue-500 focus:outline-double enabled:rounded-none"
       onChange={onChange}
-      placeholder='Search'
+      placeholder="Search"
     ></input>
   );
 };
@@ -47,7 +47,7 @@ const Task = ({
   const onDoubleClick = () => {
     setLoadViewingScreen(true);
     setOperation({
-      type: 'edit',
+      type: "edit",
       props: {
         id,
         title,
@@ -62,19 +62,19 @@ const Task = ({
   return (
     <div
       className={`flex gap-2 p-2 ${
-        addBottomBorder ? 'border-x-0 border-t-0 border-solid' : ''
+        addBottomBorder ? "border-x-0 border-t-0 border-solid" : ""
       } text-[1.2rem] hover:cursor-pointer hover:bg-slate-50`}
       onDoubleClick={onDoubleClick}
     >
-      <div className='w-[80%]'>
-        <h3 className='m-0 border border-x-0 border-t-0 border-solid border-red-400 text-gray-500'>
+      <div className="w-[80%]">
+        <h3 className="m-0 border border-x-0 border-t-0 border-solid border-red-400 text-gray-500">
           {title}
         </h3>
-        <p className='h-[2rem] text-[12px]'>{description}</p>
+        <p className="h-[2rem] text-[12px]">{description}</p>
       </div>
-      <div className='grid w-[10%] grid-cols-2 p-1 text-[0.7rem] font-bold'>
-        {['M', 'T', 'W', 'Th', 'F', 'S', 'Su'].map((day, idx) => {
-          const color = days[idx] ? 'text-green-500' : 'text-red-500';
+      <div className="grid w-[10%] grid-cols-2 p-1 text-[0.7rem] font-bold">
+        {["M", "T", "W", "Th", "F", "S", "Su"].map((day, idx) => {
+          const color = days[idx] ? "text-green-500" : "text-red-500";
           if (idx !== 6) {
             return <div className={color}>{day}</div>;
           }
@@ -82,10 +82,10 @@ const Task = ({
         })}
       </div>
       <div
-        className='relative flex h-[20px] w-[20px] items-center justify-center self-center rounded-[50%] bg-red-400 hover:bg-red-500'
+        className="relative flex h-[20px] w-[20px] items-center justify-center self-center rounded-[50%] bg-red-400 hover:bg-red-500"
         onClick={() => deleteTask(id)}
       >
-        <div className='h-[3px] w-[70%] bg-white'></div>
+        <div className="h-[3px] w-[70%] bg-white"></div>
       </div>
     </div>
   );
@@ -103,7 +103,7 @@ const Tasks = () => {
   // implement this when the db is setup; need id to delete
   const deleteTask = async (id) => {
     await axios.post(
-      'http://localhost:2500/todolist/delete-task',
+      "http://localhost:2500/todolist/delete-task",
       { id },
       { withCredentials: true },
     );
@@ -113,7 +113,7 @@ const Tasks = () => {
   };
 
   return (
-    <div className='overflow scrollbar-thin box-border h-[25.3rem] w-[80%] overflow-y-scroll rounded-lg border-solid'>
+    <div className="overflow scrollbar-thin box-border h-[25.3rem] w-[80%] overflow-y-scroll rounded-lg border-solid">
       {tasksToDisplay.map((task, idx) => (
         <Task
           id={task.id}
@@ -138,23 +138,23 @@ const TaskViewScreen = () => {
   const setFromOperation = (key, def) => () => operation.props[key] || def;
 
   const id = operation.props?.id;
-  const [title, setTitle] = useState(setFromOperation('title', ''));
+  const [title, setTitle] = useState(setFromOperation("title", ""));
   const [description, setDescription] = useState(
-    setFromOperation('description', ''),
+    setFromOperation("description", ""),
   );
   const [days, setDays] = useState(
-    setFromOperation('days', [false, false, false, false, false, false, false]),
+    setFromOperation("days", [false, false, false, false, false, false, false]),
   );
-  const [time, setTime] = useState(setFromOperation('time', ''));
+  const [time, setTime] = useState(setFromOperation("time", ""));
   const [repeating, setRepeating] = useState(
-    setFromOperation('repeating', false),
+    setFromOperation("repeating", false),
   );
 
   const sendToServer = async () => {
-    if (operation.type === 'edit') {
+    if (operation.type === "edit") {
       const task = { id, title, description, days, time, repeating };
       await axios
-        .put('http://localhost:2500/todolist/change-task', task, {
+        .put("http://localhost:2500/todolist/change-task", task, {
           withCredentials: true,
         })
         .then((res) => {
@@ -163,10 +163,10 @@ const TaskViewScreen = () => {
             setLoadViewingScreen(false);
           }
         });
-    } else if (operation.type === 'add') {
+    } else if (operation.type === "add") {
       const task = { title, description, days, time, repeating };
       await axios
-        .post('http://localhost:2500/todolist/add-task', task, {
+        .post("http://localhost:2500/todolist/add-task", task, {
           withCredentials: true,
         })
         .then((res) => {
@@ -181,29 +181,29 @@ const TaskViewScreen = () => {
 
   return (
     // here
-    <div className='flex flex-col justify-center items-center absolute h-screen w-screen backdrop-blur-[30px]'>
+    <div className="absolute flex h-full w-full flex-col items-center justify-center backdrop-blur-[30px]">
       <div
-        className='absolute h-screen w-screen'
+        className="absolute h-full w-full"
         onClick={() => setLoadViewingScreen(false)}
       ></div>
-      <div className='flex flex-col gap-2 p-6 rounded-sm z-10 bg-slate-300'>
+      <div className="z-10 flex flex-col gap-2 rounded-sm bg-slate-300 p-6">
         <input
-          spellcheck='false'
-          className='border-solid border-transparent focus:border-solid focus:border-blue-500 text-[1rem] p-1 rounded-md text-slate-500 font-bold outline-none'
+          spellcheck="false"
+          className="rounded-md border-solid border-transparent p-1 text-[1rem] font-bold text-slate-500 outline-none focus:border-solid focus:border-blue-500"
           onChange={(e) => setTitle(e.target.value)}
           value={title}
         ></input>
         <textarea
-          spellcheck='false'
-          className='p-2 rounded-md border-none resize-none outline-none h-[10rem]'
+          spellcheck="false"
+          className="h-[10rem] resize-none rounded-md border-none p-2 outline-none"
           onChange={(e) => setDescription(e.target.value)}
           value={description}
         ></textarea>
-        <div className='flex self-center'>
-          {['M', 'T', 'W', 'Th', 'F', 'S', 'Su'].map((day, idx) => (
-            <div className='flex flex-column justify-center max-w-min flex-wrap'>
+        <div className="flex self-center">
+          {["M", "T", "W", "Th", "F", "S", "Su"].map((day, idx) => (
+            <div className="flex-column flex max-w-min flex-wrap justify-center">
               <input
-                type='checkbox'
+                type="checkbox"
                 onChange={() => {
                   let newDays = [...days];
                   newDays[idx] = !days[idx];
@@ -211,29 +211,30 @@ const TaskViewScreen = () => {
                 }}
                 checked={days[idx]}
               ></input>
-              <div className='text-[14px] font-mono'>{day}</div>
+              <div className="font-mono text-[14px]">{day}</div>
             </div>
           ))}
         </div>
-        <div className='self-center'>
+        <div className="self-center">
           <div>
             <button
-              className={`p-[0.26rem] ${repeating ? 'bg-slate-400' : 'bg-white'} hover:bg-slate-200 font-bold rounded-l-full border-none`}
+              className={`p-[0.26rem] ${repeating ? "bg-slate-400" : "bg-white"} rounded-l-full border-none font-bold hover:bg-slate-200`}
               onClick={() => setRepeating(!repeating)}
             >
               R
             </button>
             <input
-              type='time'
-              className='p-1 rounded-r-full border-none border-gray-300 focus:outline-none focus:ring-blue-500'
+              type="time"
+              className="rounded-r-full border-none border-gray-300 p-1 focus:outline-none focus:ring-blue-500"
               onChange={(e) => setTime(e.target.value)}
               value={time}
             />
           </div>
         </div>
       </div>
+      <div></div>
       <button
-        className='relative border-none rounded-md bg-orange-300 hover:bg-orange-400 cursor-pointer text-white font-bold w-[4rem] p-1 right-[6rem] top-2 z-10'
+        className="relative right-[6rem] top-2 z-10 w-[4rem] cursor-pointer rounded-md border-none bg-orange-300 p-1 font-bold text-white hover:bg-orange-400"
         onClick={sendToServer}
       >
         {operation.type[0].toUpperCase() + operation.type.substr(1)}
@@ -247,17 +248,17 @@ const AddTaskButton = () => {
 
   return (
     <div
-      className='relative right-[11rem] flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-green-400 hover:cursor-pointer hover:bg-green-500'
+      className="relative right-[11rem] flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-green-400 hover:cursor-pointer hover:bg-green-500"
       onClick={() => {
         setLoadViewingScreen(true);
         setOperation({
-          type: 'add',
+          type: "add",
           props: {},
         });
       }}
     >
-      <div className='h-[15%] w-[60%] bg-white'></div>
-      <div className='absolute h-[15%] w-[60%] rotate-90 bg-white'></div>
+      <div className="h-[15%] w-[60%] bg-white"></div>
+      <div className="absolute h-[15%] w-[60%] rotate-90 bg-white"></div>
     </div>
   );
 };
@@ -267,7 +268,7 @@ const TodoApp = () => {
   const [tasks, setTasks] = useState([]);
   useEffect(() => {
     axios
-      .get('http://localhost:2500/todolist/', { withCredentials: true })
+      .get("http://localhost:2500/todolist/", { withCredentials: true })
       .then((res) => res.data)
       .then((tasks) => {
         setTasks(
@@ -306,7 +307,7 @@ const TodoApp = () => {
         setOperation,
       }}
     >
-      <div className='mx-auto flex h-screen w-[30rem] flex-col items-center justify-center gap-2'>
+      <div className="mx-auto flex h-full w-[30rem] flex-col items-center justify-center gap-2">
         <Search />
         <Tasks />
         <AddTaskButton />

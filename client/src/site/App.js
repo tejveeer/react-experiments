@@ -22,8 +22,9 @@ const useDynamicallyGeneratedRoutes = () => {
       for (const importablePath of importablePaths) {
         const Component = (await import(`../categories/${importablePath}`))
           .default;
-        const routePath = '/' + importablePath.split('/')[1];
+        const routePath = '/' + importablePath.split('/')[1].split('.')[0];
 
+        console.log(routePath);
         routedComponents.push(
           <Route
             path={routePath}
@@ -67,7 +68,7 @@ const App = () => {
     <UserContext.Provider value={{ user, setUser }}>
       <div className='h-full flex flex-col'>
         <Navbar />
-        <div className='flex-grow'>
+        <div className='relative flex-grow'>
           <Routes>
             <Route
               path='/'
