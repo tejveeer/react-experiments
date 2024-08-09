@@ -24,7 +24,6 @@ const useDynamicallyGeneratedRoutes = () => {
           .default;
         const routePath = '/' + importablePath.split('/')[1].split('.')[0];
 
-        console.log(routePath);
         routedComponents.push(
           <Route
             path={routePath}

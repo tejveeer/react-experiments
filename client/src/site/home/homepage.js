@@ -7,7 +7,6 @@ import { UserContext } from "../utils/UserContext";
 import MarkdownView from "react-showdown";
 
 import getEnglishDate from "./englishDate";
-import "./homepage.css";
 import useMousePosition from "./mouseHook";
 
 export default function Homepage() {
@@ -70,13 +69,15 @@ function Category({ categoryName, category, d = 0 }) {
           />
         )}
         {toggle &&
-          Object.keys(category.folders).map((key) => (
-            <Category
-              categoryName={key}
-              category={category.folders[key]}
-              d={1}
-            />
-          ))}
+          Object.keys(category.folders).map((key) =>
+            category.folders[key].hasIndex ? (
+              <Category
+                categoryName={key}
+                category={category.folders[key]}
+                d={1}
+              />
+            ) : null,
+          )}
         {toggle &&
           category.files.map((key) => (
             <Category categoryName={key} category={{}} d={1} />
@@ -135,11 +136,15 @@ function HoverMessage({ isViewingDescription }) {
   const { x, y } = useMousePosition();
   return (
     <div
-      style={x !== null && y !== null ? {
-        position: "absolute",
-        left: `${x - 50}px`,
-        top: `${y - 45}px`,
-      } : {display: 'none'}}
+      style={
+        x !== null && y !== null
+          ? {
+              position: "absolute",
+              left: `${x - 50}px`,
+              top: `${y - 45}px`,
+            }
+          : { display: "none" }
+      }
       className={`z-10 text-nowrap rounded-md bg-teal-600 px-1 text-sm text-white`}
     >
       {isViewingDescription ? "Undo" : "View"} description
@@ -147,7 +152,7 @@ function HoverMessage({ isViewingDescription }) {
   );
 }
 
-const CategoryDescription = ({ mdDescription }) => {
+function CategoryDescription({ mdDescription }) {
   return (
     <>
       <div className="mb-2 flex w-full justify-center self-center rounded-md bg-orange-300 p-1 text-[13px]">
@@ -155,4 +160,4 @@ const CategoryDescription = ({ mdDescription }) => {
       </div>
     </>
   );
-};
+}
