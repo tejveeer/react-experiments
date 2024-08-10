@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { useCategoriesInformation } from "../utils/categoriesUtils";
+import { useGet } from "../utils/categoriesUtils";
 import { UserContext } from "../utils/UserContext";
 
 import MarkdownView from "react-showdown";
@@ -10,17 +10,31 @@ import getEnglishDate from "./englishDate";
 import useMousePosition from "./mouseHook";
 
 export default function Homepage() {
-  const catInfo = useCategoriesInformation();
+  const { isLoading, data: catInfo } = useGet(
+    "http://localhost:2500/categories/information",
+  );
   const { user } = useContext(UserContext);
 
   return (
     <div className="mx-auto w-2/3">
       <p>Hey {user.name}, the following projects are available for your use:</p>
-      <div>
-        {Object.keys(catInfo).map((key) => (
-          <Category categoryName={key} category={catInfo[key]} />
-        ))}
-      </div>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div>
+          {Object.keys(catInfo).map((key) => (
+            <Category categoryName={key} category={catInfo[key]} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="w-full rounded-md border-dashed border-slate-400 bg-slate-300 p-4 text-slate-800 text-center text-[2em]">
+      Loading..
     </div>
   );
 }

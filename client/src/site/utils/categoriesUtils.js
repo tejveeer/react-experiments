@@ -1,20 +1,20 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export async function getImportablePaths() {
   const { data } = await axios.get(
-    'http://localhost:2500/categories/importable-paths',
+    "http://localhost:2500/categories/importable-paths",
   );
 
-  return data.map((path) => path.split('../categories/')[1]);
+  return data.map((path) => path.split("../categories/")[1]);
 }
 
 export function useImportablePaths() {
-  const [state, setState] = useState('');
+  const [state, setState] = useState("");
   useEffect(() => {
     async function getData() {
       const { data } = await axios.get(
-        'http://localhost:2500/categories/importable-paths',
+        "http://localhost:2500/categories/importable-paths",
       );
       setState(data);
     }
@@ -24,15 +24,15 @@ export function useImportablePaths() {
 }
 
 export async function getCategories() {
-  const { data } = await axios.get('http://localhost:2500/categories/');
+  const { data } = await axios.get("http://localhost:2500/categories/");
   return data;
 }
 
 export function useCategories() {
-  const [state, setState] = useState('');
+  const [state, setState] = useState("");
   useEffect(() => {
     async function getData() {
-      const { data } = await axios.get('http://localhost:2500/categories/');
+      const { data } = await axios.get("http://localhost:2500/categories/");
       setState(data);
     }
     getData();
@@ -42,21 +42,35 @@ export function useCategories() {
 
 export async function getCategoriesInformation() {
   const { data } = await axios.get(
-    'http://localhost:2500/categories/information',
+    "http://localhost:2500/categories/information",
   );
   return data;
 }
 
 export function useCategoriesInformation() {
-  const [state, setState] = useState('');
+  const [state, setState] = useState("");
   useEffect(() => {
     async function getData() {
       const { data } = await axios.get(
-        'http://localhost:2500/categories/information',
+        "http://localhost:2500/categories/information",
       );
       setState(data);
     }
     getData();
   }, []);
   return state;
+}
+
+export function useGet(url) {
+  const [data, setData] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(url).then((res) => {
+      setData(res.data);
+      setIsLoading(false);
+    });
+  }, []);
+
+  return { isLoading, data };
 }
