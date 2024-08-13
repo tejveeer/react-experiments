@@ -1,15 +1,15 @@
-import { useContext, useEffect, useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { UserContext } from './utils/UserContext';
+import { useContext, useEffect, useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { UserContext } from "./utils/UserContext";
 
-import Homepage from './home/homepage';
-import Login from './authentication/login';
-import Register from './authentication/register';
-import Main from './authentication/mainpage';
-import Navbar from './Navbar';
+import Homepage from "./home/homepage";
+import Login from "./authentication/login";
+import Register from "./authentication/register";
+import Main from "./authentication/mainpage";
+import Navbar from "./Navbar";
 
-import { getImportablePaths } from './utils/categoriesUtils';
-import Cookies from 'js-cookie';
+import { getImportablePaths } from "./utils/categoriesUtils";
+import Cookies from "js-cookie";
 
 const useDynamicallyGeneratedRoutes = () => {
   const [components, setComponents] = useState([<></>]);
@@ -22,7 +22,7 @@ const useDynamicallyGeneratedRoutes = () => {
       for (const importablePath of importablePaths) {
         const Component = (await import(`../categories/${importablePath}`))
           .default;
-        const routePath = '/' + importablePath.split('/')[1].split('.')[0];
+        const routePath = "/" + importablePath.split("/")[1].split(".")[0];
 
         routedComponents.push(
           <Route
@@ -44,7 +44,7 @@ const useDynamicallyGeneratedRoutes = () => {
   return components;
 };
 
-const AuthorizedRoute = ({ pathOnFailure = '/login', children }) => {
+const AuthorizedRoute = ({ pathOnFailure = "/login", children }) => {
   const { user } = useContext(UserContext);
   if (!user.name) {
     return <Navigate to={pathOnFailure} />;
@@ -56,34 +56,25 @@ const App = () => {
   const routes = useDynamicallyGeneratedRoutes();
 
   const [user, setUser] = useState(() => {
-    const data = Cookies.get('user');
+    const data = Cookies.get("user");
     if (data) {
       return JSON.parse(data);
     }
-    return { name: '', email: '', userId: '', roles: [] };
+    return { name: "", email: "", userId: "", roles: [] };
   });
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <div className='h-full flex flex-col'>
+      <div className="flex h-full flex-col">
         <Navbar />
-        <div className='relative flex-grow'>
+        <div className="relative flex-grow">
           <Routes>
+            <Route path="/" element={<Main />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
             <Route
-              path='/'
-              element={<Main />}
-            ></Route>
-            <Route
-              path='/login'
-              element={!user.name ? <Login /> : <Navigate to='/homepage' />}
-            ></Route>
-            <Route
-              path='/register'
-              element={!user.name ? <Register /> : <Navigate to='/homepage' />}
-            ></Route>
-            <Route
-              path='/homepage'
-              element={!user.name ? <Navigate to='/login' /> : <Homepage />}
+              path="/homepage"
+              element={!user.name ? <Navigate to="/login" /> : <Homepage />}
             ></Route>
             {/* Protected routes */}
             {routes}

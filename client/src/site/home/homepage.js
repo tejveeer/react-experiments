@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useGet } from "../utils/categoriesUtils";
@@ -32,9 +32,18 @@ export default function Homepage() {
 }
 
 function Loading() {
+  const [dots, setDots] = useState("");
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="w-full rounded-md border-dashed border-slate-400 bg-slate-300 p-4 text-slate-800 text-center text-[2em]">
-      Loading..
+    <div className="w-full rounded-md border-dashed border-slate-400 bg-slate-300 p-4 text-center text-[2em] text-slate-800">
+      Loading{dots}
     </div>
   );
 }
