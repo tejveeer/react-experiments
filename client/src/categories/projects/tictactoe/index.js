@@ -1,7 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from './UserContext';
-import { Link } from 'react-router-dom';
-
+import { useEffect, useState } from 'react';
 import './tictactoe.css';
 
 const checkWinner = (board) => {

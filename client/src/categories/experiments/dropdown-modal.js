@@ -1,4 +1,5 @@
 import { useReducer } from "react";
+import { useLocation } from "react-router-dom";
 
 const actions = {
   SWITCH_VISIBILITY: "SWITCH_VISIBILITY",
@@ -36,7 +37,10 @@ export default function Experiment() {
     visible: false,
     options: [
       { option: "option 1", selected: true },
-      { option: "option 2" },
+      {
+        option:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa, voluptatibus. Accusantium quod libero impedit vitae nobis. In sed veritatis illum pariatur neque odio, nisi non autem. Dolorem maxime inventore quas.",
+      },
       { option: "option 3" },
       { option: "option 4" },
     ],
@@ -52,9 +56,16 @@ export default function Experiment() {
 }
 
 function DropdownModal({ state, dispatch }) {
-  const [{ option: currentlySelectedOption }] = state.options.filter(
-    (option) => option.selected,
-  );
+  const filteredOptions = state.options.filter((option) => option.selected);
+  console.log(filteredOptions);
+
+  let currentlySelectedOption;
+  if (filteredOptions.length === 0) {
+    currentlySelectedOption = "...";
+  } else {
+    const [{ option }] = filteredOptions;
+    currentlySelectedOption = option;
+  }
 
   return (
     <>
@@ -77,8 +88,9 @@ function CurrentlySelected({ content, onClick }) {
   return (
     <>
       <div
+        title={content}
         onClick={onClick}
-        className="cursor-pointer rounded-lg bg-stone-500 p-1 px-3 font-bold text-stone-300 transition duration-100 hover:bg-stone-600"
+        className="max-w-[200px] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-stone-500 p-1 px-3 font-bold text-stone-300 transition duration-100 hover:bg-stone-600"
       >
         {content}
       </div>

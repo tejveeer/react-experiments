@@ -5,7 +5,6 @@ import { UserContext } from '../utils/UserContext';
 import './auth.css';
 
 const Login = () => {
-  console.log('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
