@@ -65,9 +65,9 @@ const App = () => {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <div className="flex h-full flex-col">
+      <div className="relative flex h-full flex-col">
         <Navbar />
-        <div className="relative flex-grow">
+        <div className="flex-grow">
           <Routes>
             <Route path="/" element={<Main />}></Route>
             <Route path="/login" element={<Login />}></Route>

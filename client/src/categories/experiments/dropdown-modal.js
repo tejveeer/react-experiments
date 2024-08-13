@@ -1,5 +1,4 @@
 import { useReducer } from "react";
-import { useLocation } from "react-router-dom";
 
 const actions = {
   SWITCH_VISIBILITY: "SWITCH_VISIBILITY",
@@ -33,7 +32,7 @@ function reducer(state, action) {
 }
 
 export default function Experiment() {
-  const [dropdownState, dispatch] = useReducer(reducer, {
+  const [fstDropdownState, dispatchFirst] = useReducer(reducer, {
     visible: false,
     options: [
       { option: "option 1", selected: true },
@@ -46,10 +45,22 @@ export default function Experiment() {
     ],
   });
 
+  const [sndDropdownState, dispatchSnd] = useReducer(reducer, {
+    visible: false,
+    options: [
+      { option: "first", selected: true },
+      { option: "second" },
+      { option: "third" },
+      { option: "fourth" },
+    ],
+  });
+
   return (
     <>
       <div className="flex h-full items-center justify-center">
-        <DropdownModal state={dropdownState} dispatch={dispatch} />
+        <DropdownModal state={fstDropdownState} dispatch={dispatchFirst} />
+        <div className="mx-1 text-[2rem]">/</div>
+        <DropdownModal state={sndDropdownState} dispatch={dispatchSnd} />
       </div>
     </>
   );
@@ -99,13 +110,17 @@ function CurrentlySelected({ content, onClick }) {
 }
 
 function Options({ options, visible, dispatch }) {
-  const onSelectOption = (option) =>
+  const onSelectOption = (option) => {
     dispatch({
       type: actions.CHANGE_SELECTED_OPTION,
       payload: {
         option,
       },
     });
+    dispatch({
+      type: actions.SWITCH_VISIBILITY,
+    });
+  };
 
   return (
     <>

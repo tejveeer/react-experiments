@@ -62,6 +62,13 @@ function Category({ categoryName, category, d = 0 }) {
     creationDate = "";
   }
 
+  const onClickToggle = () => {
+    setToggle((toggle) => !toggle);
+    if (d === 0) {
+      setIsViewingDescription((isViewingDescription) => !isViewingDescription);
+    }
+  };
+
   return (
     <>
       <div className={`${d === 1 ? "ml-2" : ""} mb-2 flex justify-between`}>
@@ -69,7 +76,7 @@ function Category({ categoryName, category, d = 0 }) {
           {d === 1 ? (
             <View categoryName={categoryName} />
           ) : (
-            <Toggle toggle={toggle} setToggle={setToggle} />
+            <Toggle toggle={toggle} onClick={onClickToggle} />
           )}
           <CategoryName
             d={d}
@@ -79,14 +86,14 @@ function Category({ categoryName, category, d = 0 }) {
             isViewingDescription={isViewingDescription}
             categoryName={categoryName}
           />
-          {isOnCategoryName && (
+          {d === 1 && isOnCategoryName && (
             <HoverMessage isViewingDescription={isViewingDescription} />
           )}
         </div>
         <span className="text-sm italic">{creationDate}</span>
       </div>
       <div className="flex flex-col">
-        {isViewingDescription && (
+        {isViewingDescription && hasDescription && (
           <CategoryDescription
             mdDescription={hasDescription ? category.meta.description : ""}
           />
@@ -120,7 +127,7 @@ function CategoryName({
 }) {
   return (
     <h4
-      className={`${d === 1 ? "font-light italic" : ""} m-0 ${hasDescription ? "cursor-pointer underline decoration-orange-600 decoration-dashed" : ""}`}
+      className={`${d === 1 ? "font-light italic" : ""} m-0 ${d === 1 && hasDescription ? "cursor-pointer underline decoration-orange-600 decoration-dashed" : ""}`}
       onMouseEnter={() => setIsOnCategoryName(hasDescription && true)}
       onMouseLeave={() => setIsOnCategoryName(false)}
       onClick={() =>
@@ -132,11 +139,11 @@ function CategoryName({
   );
 }
 
-function Toggle({ toggle, setToggle }) {
+function Toggle({ toggle, onClick }) {
   return (
     <span
       className={`cursor-pointer text-[10px] ${toggle ? "rotate-90" : ""} transition-transform duration-100`}
-      onClick={() => setToggle(!toggle)}
+      onClick={onClick}
     >
       ▶
     </span>
@@ -164,7 +171,7 @@ function HoverMessage({ isViewingDescription }) {
           ? {
               position: "absolute",
               left: `${x - 50}px`,
-              top: `${y - 45}px`,
+              top: `${y - 25}px`,
             }
           : { display: "none" }
       }
