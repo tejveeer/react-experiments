@@ -22,7 +22,9 @@ const useDynamicallyGeneratedRoutes = () => {
       for (const importablePath of importablePaths) {
         const Component = (await import(`../categories/${importablePath}`))
           .default;
-        const routePath = "/" + importablePath.split("/")[1].split(".")[0];
+        const routePath = importablePath
+          .replace("/index.js", "")
+          .replace(".js", "");
 
         routedComponents.push(
           <Route

@@ -59,5 +59,5 @@ function useShortcut({ shortcut, onShortcut }) {
     return () => {
       document.removeEventListener("keydown", keyDown);
     };
-  }, []);
+  });
 }

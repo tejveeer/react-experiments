@@ -48,7 +48,7 @@ function Loading() {
   );
 }
 
-function Category({ categoryName, category, d = 0 }) {
+function Category({ categoryName, category, previousName = null, d = 0 }) {
   const [toggle, setToggle] = useState(false);
   const [isOnCategoryName, setIsOnCategoryName] = useState(false);
   const [isViewingDescription, setIsViewingDescription] = useState(false);
@@ -74,7 +74,9 @@ function Category({ categoryName, category, d = 0 }) {
       <div className={`${d === 1 ? "ml-2" : ""} mb-2 flex justify-between`}>
         <div className="flex items-center gap-2">
           {d === 1 ? (
-            <View categoryName={categoryName} />
+            <View
+              route={`/${previousName}/${categoryName.replace(".js", "")}`}
+            />
           ) : (
             <Toggle toggle={toggle} onClick={onClickToggle} />
           )}
@@ -99,18 +101,24 @@ function Category({ categoryName, category, d = 0 }) {
           />
         )}
         {toggle &&
-          Object.keys(category.folders).map((key) =>
-            category.folders[key].hasIndex ? (
+          Object.keys(category.folders).map((key, idx) => {
+            return category.folders[key].hasIndex ? (
               <Category
+                previousName={categoryName}
                 categoryName={key}
                 category={category.folders[key]}
                 d={1}
               />
-            ) : null,
-          )}
+            ) : null;
+          })}
         {toggle &&
           category.files.map((key) => (
-            <Category categoryName={key} category={{}} d={1} />
+            <Category
+              previousName={categoryName}
+              categoryName={key}
+              category={{}}
+              d={1}
+            />
           ))}
       </div>
     </>
@@ -150,8 +158,7 @@ function Toggle({ toggle, onClick }) {
   );
 }
 
-function View({ categoryName }) {
-  const route = "/" + categoryName.split(".")[0];
+function View({ route }) {
   return (
     <Link
       className="rounded-sm bg-orange-700 px-1 text-sm text-white no-underline duration-200 hover:bg-orange-800"

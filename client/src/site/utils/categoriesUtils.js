@@ -70,7 +70,7 @@ export function useGet(url) {
       setData(res.data);
       setIsLoading(false);
     });
-  }, []);
+  });
 
   return { isLoading, data };
 }

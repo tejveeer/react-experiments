@@ -14,7 +14,7 @@ const MyComponent = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex h-full items-center justify-center">
       <div className="relative">
         <div
           onClick={toggleOptions}
