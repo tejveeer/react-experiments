@@ -1,64 +1,19 @@
 import axios from "axios";
+
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-export async function getImportablePaths() {
-  const { data } = await axios.get(
-    "http://localhost:2500/categories/importable-paths",
-  );
-
-  return data.map((path) => path.split("../categories/")[1]);
+export function useQGet(storageName, url) {
+  const { isLoading, data } = useQuery({
+    queryKey: [storageName],
+    queryFn: () => axios.get(url).then((res) => res.data),
+  });
+  return { isLoading, data };
 }
 
-export function useImportablePaths() {
-  const [state, setState] = useState("");
-  useEffect(() => {
-    async function getData() {
-      const { data } = await axios.get(
-        "http://localhost:2500/categories/importable-paths",
-      );
-      setState(data);
-    }
-    getData();
-  }, []);
-  return state;
-}
-
-export async function getCategories() {
-  const { data } = await axios.get("http://localhost:2500/categories/");
-  return data;
-}
-
-export function useCategories() {
-  const [state, setState] = useState("");
-  useEffect(() => {
-    async function getData() {
-      const { data } = await axios.get("http://localhost:2500/categories/");
-      setState(data);
-    }
-    getData();
-  }, []);
-  return state;
-}
-
-export async function getCategoriesInformation() {
-  const { data } = await axios.get(
-    "http://localhost:2500/categories/information",
-  );
-  return data;
-}
-
-export function useCategoriesInformation() {
-  const [state, setState] = useState("");
-  useEffect(() => {
-    async function getData() {
-      const { data } = await axios.get(
-        "http://localhost:2500/categories/information",
-      );
-      setState(data);
-    }
-    getData();
-  }, []);
-  return state;
+export function useQCache(storageName) {
+  const queryClient = useQueryClient();
+  return queryClient.getQueryData([storageName]);
 }
 
 export function useGet(url) {
@@ -70,7 +25,26 @@ export function useGet(url) {
       setData(res.data);
       setIsLoading(false);
     });
-  });
+  }, []);
 
   return { isLoading, data };
+}
+
+export function useImportablePaths() {
+  const { data: importablePaths, isLoading } = useQGet(
+    "importable-paths",
+    "http://localhost:2500/categories/importable-paths",
+  );
+  return { importablePaths, isLoading };
+}
+
+export function useCategories() {
+  return useQGet("categories", "http://localhost:2500/categories/");
+}
+
+export function useCategoriesInformation() {
+  return useQGet(
+    "categories-information",
+    "http://localhost:2500/categories/information",
+  );
 }

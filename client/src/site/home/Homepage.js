@@ -1,18 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { useGet } from "../utils/categoriesUtils";
+import { useCategoriesInformation, useGet } from "../utils/categoriesUtils";
 import { UserContext } from "../utils/UserContext";
 
 import MarkdownView from "react-showdown";
 
-import getEnglishDate from "./englishDate";
-import useMousePosition from "./mouseHook";
+import getEnglishDate from "./utils/englishDate";
+import useMousePosition from "./utils/mouseHook";
 
 export default function Homepage() {
-  const { isLoading, data: catInfo } = useGet(
-    "http://localhost:2500/categories/information",
-  );
+  const { isLoading, data: catInfo } = useCategoriesInformation();
   const { user } = useContext(UserContext);
 
   return (
@@ -22,8 +20,8 @@ export default function Homepage() {
         <Loading />
       ) : (
         <div>
-          {Object.keys(catInfo).map((key) => (
-            <Category categoryName={key} category={catInfo[key]} />
+          {Object.keys(catInfo).map((key, idx) => (
+            <Category key={idx} categoryName={key} category={catInfo[key]} />
           ))}
         </div>
       )}
@@ -104,6 +102,7 @@ function Category({ categoryName, category, previousName = null, d = 0 }) {
           Object.keys(category.folders).map((key, idx) => {
             return category.folders[key].hasIndex ? (
               <Category
+                key={idx}
                 previousName={categoryName}
                 categoryName={key}
                 category={category.folders[key]}
@@ -112,8 +111,9 @@ function Category({ categoryName, category, previousName = null, d = 0 }) {
             ) : null;
           })}
         {toggle &&
-          category.files.map((key) => (
+          category.files.map((key, idx) => (
             <Category
+              key={idx}
               previousName={categoryName}
               categoryName={key}
               category={{}}

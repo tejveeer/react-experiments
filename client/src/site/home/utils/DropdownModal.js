@@ -1,8 +1,9 @@
 import { useReducer } from "react";
 
-const actions = {
+export const actions = {
   SWITCH_VISIBILITY: "SWITCH_VISIBILITY",
   CHANGE_SELECTED_OPTION: "CHANGE_SELECTED_OPTION",
+  INITIALIZE_OPTIONS: "INITIALIZE_OPTIONS",
 };
 
 function reducer(state, action) {
@@ -26,49 +27,23 @@ function reducer(state, action) {
         options: changeSelected(state.options),
       };
 
+    case actions.INITIALIZE_OPTIONS:
+      return { visible: false, options: action.payload.options };
+
     default:
       return;
   }
 }
 
-export default function Experiment() {
-  const [fstDropdownState, dispatchFirst] = useReducer(reducer, {
-    visible: false,
-    options: [
-      { option: "option 1", selected: true },
-      {
-        option:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa, voluptatibus. Accusantium quod libero impedit vitae nobis. In sed veritatis illum pariatur neque odio, nisi non autem. Dolorem maxime inventore quas.",
-      },
-      { option: "option 3" },
-      { option: "option 4" },
-    ],
-  });
-
-  const [sndDropdownState, dispatchSnd] = useReducer(reducer, {
-    visible: false,
-    options: [
-      { option: "first", selected: true },
-      { option: "second" },
-      { option: "third" },
-      { option: "fourth" },
-    ],
-  });
-
-  return (
-    <>
-      <div className="flex h-full items-center justify-center">
-        <DropdownModal state={fstDropdownState} dispatch={dispatchFirst} />
-        <div className="mx-1 text-[2rem]">/</div>
-        <DropdownModal state={sndDropdownState} dispatch={dispatchSnd} />
-      </div>
-    </>
+export function useDropdownState(options) {
+  return useReducer(
+    reducer,
+    options ? { visible: false, options } : { visible: false, options: [] },
   );
 }
 
-function DropdownModal({ state, dispatch }) {
+export function DropdownModal({ state, dispatch, onSelectOption = null }) {
   const filteredOptions = state.options.filter((option) => option.selected);
-  console.log(filteredOptions);
 
   let currentlySelectedOption;
   if (filteredOptions.length === 0) {
@@ -89,6 +64,7 @@ function DropdownModal({ state, dispatch }) {
           options={state.options}
           visible={state.visible}
           dispatch={dispatch}
+          onSelectOption={onSelectOption}
         />
       </div>
     </>
@@ -109,26 +85,29 @@ function CurrentlySelected({ content, onClick }) {
   );
 }
 
-function Options({ options, visible, dispatch }) {
-  const onSelectOption = (option) => {
-    dispatch({
-      type: actions.CHANGE_SELECTED_OPTION,
-      payload: {
-        option,
-      },
-    });
-    dispatch({
-      type: actions.SWITCH_VISIBILITY,
-    });
-  };
+function Options({ options, visible, dispatch, onSelectOption }) {
+  if (!onSelectOption) {
+    onSelectOption = (option) => {
+      dispatch({
+        type: actions.CHANGE_SELECTED_OPTION,
+        payload: {
+          option,
+        },
+      });
+      dispatch({
+        type: actions.SWITCH_VISIBILITY,
+      });
+    };
+  }
 
   return (
     <>
       <div
         className={`${!visible ? "hidden" : ""} py absolute left-1/2 top-[130%] flex w-max max-w-[150px] -translate-x-1/2 flex-col gap-1 rounded-lg bg-slate-200 p-1`}
       >
-        {options.map((obj) => (
+        {options.map((obj, idx) => (
           <Option
+            key={idx}
             content={obj.option}
             selected={obj.selected}
             onSelectOption={() => onSelectOption(obj.option)}

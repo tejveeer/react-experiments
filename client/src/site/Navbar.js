@@ -1,13 +1,23 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "./utils/UserContext";
+import {
+  useDropdownState,
+  DropdownModal,
+  actions,
+} from "./home/utils/DropdownModal";
 
 import _ from "lodash-es";
+
 import { useLocation } from "react-router-dom";
+import { useImportablePaths, useQCache } from "./utils/categoriesUtils";
 
 export default function Navbar() {
-  const [show, setShow] = useState(true);
+  const [folderState, folderDispatch] = useDropdownState(null);
+  const [fileState, fileDispatch] = useDropdownState(null);
 
-  const location = useLocation();
+  usePathOptionsInitialier(folderDispatch, fileDispatch);
+
+  const [show, setShow] = useState(true);
   const { user } = useContext(UserContext);
 
   useShortcut({
@@ -23,11 +33,64 @@ export default function Navbar() {
       >
         <ul className="flex w-full list-none justify-between p-0">
           <li>User ({user.name})</li>
+          <li className="flex gap-2">
+            <DropdownModal state={folderState} dispatch={folderDispatch} />
+            <DropdownModal state={fileState} dispatch={fileDispatch} />
+          </li>
           <li>Test</li>
         </ul>
       </div>
     </>
   );
+}
+
+function usePathOptionsInitialier(folderDispatch, fileDispatch) {
+  const location = useLocation();
+  const importablePaths = useQCache("importable-paths");
+
+  useEffect(() => {
+    console.log("called effect");
+    if (!importablePaths) return;
+
+    const [currentFolder, currentFile] = location.pathname
+      .replaceAll("/", " ")
+      .trim()
+      .split(" ");
+
+    const folders = new Set(importablePaths.map((path) => path.split("/")[0]));
+    const files = new Set(
+      importablePaths.map((path) => path.split("/")[1].replace(".js", "")),
+    );
+
+    let folderOptions = [];
+    folders.forEach((folder) => {
+      folderOptions.push({
+        option: folder,
+        selected: folder === currentFolder,
+      });
+    });
+
+    let fileOptions = [];
+    files.forEach((file) => {
+      fileOptions.push({
+        option: file,
+        selected: file === currentFile,
+      });
+    });
+
+    folderDispatch({
+      type: actions.INITIALIZE_OPTIONS,
+      payload: {
+        options: folderOptions,
+      },
+    });
+    fileDispatch({
+      type: actions.INITIALIZE_OPTIONS,
+      payload: {
+        options: fileOptions,
+      },
+    });
+  }, [importablePaths, location]);
 }
 
 function useShortcut({ shortcut, onShortcut }) {

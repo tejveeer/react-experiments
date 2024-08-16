@@ -2,61 +2,17 @@ import { useContext, useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { UserContext } from "./utils/UserContext";
 
-import Homepage from "./home/homepage";
-import Login from "./authentication/login";
-import Register from "./authentication/register";
-import Main from "./authentication/mainpage";
+import Homepage from "./home/Homepage";
+import Login from "./authentication/Login";
+import Register from "./authentication/Register";
+import Main from "./authentication/Mainpage";
 import Navbar from "./Navbar";
 
-import { getImportablePaths } from "./utils/categoriesUtils";
+import { useImportablePaths } from "./utils/categoriesUtils";
 import Cookies from "js-cookie";
 
-const useDynamicallyGeneratedRoutes = () => {
-  const [components, setComponents] = useState([<></>]);
-
-  useEffect(() => {
-    const createRoutesFromImportablePaths = async () => {
-      const importablePaths = await getImportablePaths();
-      const routedComponents = [];
-
-      for (const importablePath of importablePaths) {
-        const Component = (await import(`../categories/${importablePath}`))
-          .default;
-        const routePath = importablePath
-          .replace("/index.js", "")
-          .replace(".js", "");
-
-        routedComponents.push(
-          <Route
-            path={routePath}
-            element={
-              <AuthorizedRoute>
-                <Component />
-              </AuthorizedRoute>
-            }
-          ></Route>,
-        );
-      }
-
-      setComponents(routedComponents);
-    };
-    createRoutesFromImportablePaths();
-  }, []);
-
-  return components;
-};
-
-const AuthorizedRoute = ({ pathOnFailure = "/login", children }) => {
-  const { user } = useContext(UserContext);
-  if (!user.name) {
-    return <Navigate to={pathOnFailure} />;
-  }
-  return children;
-};
-
-const App = () => {
+export default function App() {
   const routes = useDynamicallyGeneratedRoutes();
-
   const [user, setUser] = useState(() => {
     const data = Cookies.get("user");
     if (data) {
@@ -85,6 +41,49 @@ const App = () => {
       </div>
     </UserContext.Provider>
   );
-};
+}
 
-export default App;
+function useDynamicallyGeneratedRoutes() {
+  const [components, setComponents] = useState([<></>]);
+  const { importablePaths, isLoading } = useImportablePaths();
+
+  useEffect(() => {
+    const createRoutesFromImportablePaths = async () => {
+      if (isLoading) return;
+      const routedComponents = [];
+
+      let key = 0;
+      for (const importablePath of importablePaths) {
+        const Component = (await import(`../categories/${importablePath}`))
+          .default;
+        const routePath = importablePath.replace(".js", "");
+
+        routedComponents.push(
+          <Route
+            key={key}
+            path={routePath}
+            element={
+              <AuthorizedRoute>
+                <Component />
+              </AuthorizedRoute>
+            }
+          ></Route>,
+        );
+        key += 1;
+      }
+
+      setComponents(routedComponents);
+    };
+    createRoutesFromImportablePaths();
+  }, [isLoading, importablePaths]);
+
+  return components;
+}
+
+function AuthorizedRoute({ pathOnFailure = "/login", children }) {
+  const { user } = useContext(UserContext);
+  if (!user.name) {
+    return <Navigate to={pathOnFailure} />;
+  }
+  return children;
+}
