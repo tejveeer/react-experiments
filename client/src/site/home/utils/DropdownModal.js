@@ -40,12 +40,12 @@ function reducer(state, action) {
           if (optionsToChange.includes(optionObj.option)) {
             return {
               ...optionObj,
-              visible: optionVisibility ? !optionVisibility : false,
+              visible: true,
             };
           }
           return {
             ...optionObj,
-            visible: optionVisibility ? optionVisibility : true,
+            visible: false,
           };
         }),
       };
@@ -126,14 +126,18 @@ function Options({ options, visible, dispatch, onSelectOption }) {
       <div
         className={`${!visible ? "hidden" : ""} py absolute left-1/2 top-[130%] flex w-max max-w-[150px] -translate-x-1/2 flex-col gap-1 rounded-lg bg-slate-200 p-1`}
       >
-        {options.map((obj, idx) => (
-          <Option
-            key={idx}
-            content={obj.option}
-            selected={obj.selected}
-            onSelectOption={() => onSelectOption(obj.option)}
-          />
-        ))}
+        {options.map((obj, idx) =>
+          obj?.visible === undefined || obj?.visible ? (
+            <Option
+              key={idx}
+              content={obj.option}
+              selected={obj.selected}
+              onSelectOption={() => onSelectOption(obj.option)}
+            />
+          ) : (
+            ""
+          ),
+        )}
       </div>
     </>
   );

@@ -10,6 +10,7 @@ import {
   changeOptionSelectionDispatcher,
   initializeOptionsDispatcher,
   switchDropdownVisibilityDispatcher,
+  switchOptionsVisibilityDispatcher,
 } from "./home/utils/dropdownDispatcher";
 
 export default function Navbar() {
@@ -34,7 +35,17 @@ export default function Navbar() {
     fileDispatch,
   );
 
-  function selectFolderOption() {}
+  function selectFolderOption(option) {
+    if (importablePaths.length === 0) return;
+
+    const correspondingFolderFiles = importablePaths
+      .filter((path) => path.includes(option))
+      .map((path) => path.split("/")[1].replace(".js", ""));
+
+    switchOptionsVisibilityDispatcher(fileDispatch, correspondingFolderFiles);
+    changeOptionSelectionDispatcher(folderDispatch, option);
+    switchDropdownVisibilityDispatcher(folderDispatch);
+  }
 
   function onFolderDropdownClick() {
     if (fileState.options.length === 0 || fileState.visible) return;
@@ -73,6 +84,7 @@ export default function Navbar() {
               state={folderState}
               dispatch={folderDispatch}
               onDropdownClick={onFolderDropdownClick}
+              onSelectOption={selectFolderOption}
             />
             <DropdownModal
               state={fileState}
