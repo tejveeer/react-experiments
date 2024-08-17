@@ -1,29 +1,64 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "./utils/UserContext";
-import {
-  useDropdownState,
-  DropdownModal,
-  actions,
-} from "./home/utils/DropdownModal";
+import { useDropdownState, DropdownModal } from "./home/utils/DropdownModal";
 
 import _ from "lodash-es";
 
 import { useLocation } from "react-router-dom";
-import { useImportablePaths, useQCache } from "./utils/categoriesUtils";
+import { useQCache } from "./utils/categoriesUtils";
+import {
+  changeOptionSelectionDispatcher,
+  initializeOptionsDispatcher,
+  switchDropdownVisibilityDispatcher,
+} from "./home/utils/dropdownDispatcher";
 
 export default function Navbar() {
-  const [folderState, folderDispatch] = useDropdownState(null);
-  const [fileState, fileDispatch] = useDropdownState(null);
-
-  usePathOptionsInitialier(folderDispatch, fileDispatch);
-
-  const [show, setShow] = useState(true);
   const { user } = useContext(UserContext);
+  const [show, setShow] = useState(true);
 
   useShortcut({
     shortcut: ["alt", "shift", "A"],
     onShortcut: () => setShow((show) => !show),
   });
+
+  const location = useLocation();
+  const importablePaths = useQCache("importable-paths");
+
+  const [folderState, folderDispatch] = useDropdownState(null);
+  const [fileState, fileDispatch] = useDropdownState(null);
+
+  usePathOptionsInitialier(
+    location,
+    importablePaths,
+    folderDispatch,
+    fileDispatch,
+  );
+
+  function selectFolderOption() {}
+
+  function onFolderDropdownClick() {
+    if (fileState.options.length === 0 || fileState.visible) return;
+
+    const fileSelections = fileState.options.filter(
+      (option) => option.selected,
+    );
+    if (fileSelections.length !== 0) {
+      const [{ option }] = fileSelections;
+      changeOptionSelectionDispatcher(fileDispatch, option);
+    }
+
+    switchDropdownVisibilityDispatcher(folderDispatch);
+  }
+  function onFileDropdownClick() {
+    if (folderState.options.length === 0 || folderState.visible) return;
+
+    const folderSelections = folderState.options.filter(
+      (option) => option.selected,
+    );
+    if (folderSelections.length === 0) return;
+
+    switchDropdownVisibilityDispatcher(fileDispatch);
+  }
 
   return (
     <>
@@ -34,8 +69,16 @@ export default function Navbar() {
         <ul className="flex w-full list-none justify-between p-0">
           <li>User ({user.name})</li>
           <li className="flex gap-2">
-            <DropdownModal state={folderState} dispatch={folderDispatch} />
-            <DropdownModal state={fileState} dispatch={fileDispatch} />
+            <DropdownModal
+              state={folderState}
+              dispatch={folderDispatch}
+              onDropdownClick={onFolderDropdownClick}
+            />
+            <DropdownModal
+              state={fileState}
+              dispatch={fileDispatch}
+              onDropdownClick={onFileDropdownClick}
+            />
           </li>
           <li>Test</li>
         </ul>
@@ -44,12 +87,13 @@ export default function Navbar() {
   );
 }
 
-function usePathOptionsInitialier(folderDispatch, fileDispatch) {
-  const location = useLocation();
-  const importablePaths = useQCache("importable-paths");
-
+function usePathOptionsInitialier(
+  location,
+  importablePaths,
+  folderDispatch,
+  fileDispatch,
+) {
   useEffect(() => {
-    console.log("called effect");
     if (!importablePaths) return;
 
     const [currentFolder, currentFile] = location.pathname
@@ -78,18 +122,8 @@ function usePathOptionsInitialier(folderDispatch, fileDispatch) {
       });
     });
 
-    folderDispatch({
-      type: actions.INITIALIZE_OPTIONS,
-      payload: {
-        options: folderOptions,
-      },
-    });
-    fileDispatch({
-      type: actions.INITIALIZE_OPTIONS,
-      payload: {
-        options: fileOptions,
-      },
-    });
+    initializeOptionsDispatcher(folderDispatch, folderOptions);
+    initializeOptionsDispatcher(fileDispatch, fileOptions);
   }, [importablePaths, location]);
 }
 

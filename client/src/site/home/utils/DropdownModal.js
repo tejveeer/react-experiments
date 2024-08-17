@@ -1,34 +1,54 @@
 import { useReducer } from "react";
+import {
+  switchDropdownVisibilityDispatcher,
+  changeOptionSelectionDispatcher,
+} from "./dropdownDispatcher";
 
 export const actions = {
-  SWITCH_VISIBILITY: "SWITCH_VISIBILITY",
-  CHANGE_SELECTED_OPTION: "CHANGE_SELECTED_OPTION",
+  SWITCH_DROPDOWN_VISIBILITY: "SWITCH_DROPDOWN_VISIBILITY",
+  CHANGE_OPTION_SELECTION: "CHANGE_OPTION_SELECTION",
   INITIALIZE_OPTIONS: "INITIALIZE_OPTIONS",
+  SWITCH_OPTIONS_VISIBILITY: "SWITCH_OPTIONS_VISIBILITY",
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case actions.SWITCH_VISIBILITY:
+    case actions.SWITCH_DROPDOWN_VISIBILITY:
       return { ...state, visible: !state.visible };
 
-    case actions.CHANGE_SELECTED_OPTION:
+    case actions.CHANGE_OPTION_SELECTION:
       const optionToChange = action.payload.option;
-      const changeSelected = (options) => {
-        return options.map((optionObj) => {
+      return {
+        ...state,
+        options: state.options.map((optionObj) => {
           if (optionObj.option === optionToChange || optionObj.selected) {
             return { ...optionObj, selected: !optionObj.selected };
           }
           return optionObj;
-        });
-      };
-
-      return {
-        ...state,
-        options: changeSelected(state.options),
+        }),
       };
 
     case actions.INITIALIZE_OPTIONS:
       return { visible: false, options: action.payload.options };
+
+    case actions.SWITCH_OPTIONS_VISIBILITY:
+      const optionsToChange = action.payload.options;
+      return {
+        ...state,
+        options: state.options.map((optionObj) => {
+          const optionVisibility = optionObj?.visible;
+          if (optionsToChange.includes(optionObj.option)) {
+            return {
+              ...optionObj,
+              visible: optionVisibility ? !optionVisibility : false,
+            };
+          }
+          return {
+            ...optionObj,
+            visible: optionVisibility ? optionVisibility : true,
+          };
+        }),
+      };
 
     default:
       return;
@@ -42,7 +62,15 @@ export function useDropdownState(options) {
   );
 }
 
-export function DropdownModal({ state, dispatch, onSelectOption = null }) {
+export function DropdownModal({
+  state,
+  dispatch,
+  onSelectOption = null,
+  onDropdownClick = null,
+}) {
+  if (!onDropdownClick) {
+    onDropdownClick = () => switchDropdownVisibilityDispatcher(dispatch);
+  }
   const filteredOptions = state.options.filter((option) => option.selected);
 
   let currentlySelectedOption;
@@ -58,7 +86,7 @@ export function DropdownModal({ state, dispatch, onSelectOption = null }) {
       <div className="relative">
         <CurrentlySelected
           content={currentlySelectedOption}
-          onClick={() => dispatch({ type: actions.SWITCH_VISIBILITY })}
+          onClick={onDropdownClick}
         />
         <Options
           options={state.options}
@@ -88,15 +116,8 @@ function CurrentlySelected({ content, onClick }) {
 function Options({ options, visible, dispatch, onSelectOption }) {
   if (!onSelectOption) {
     onSelectOption = (option) => {
-      dispatch({
-        type: actions.CHANGE_SELECTED_OPTION,
-        payload: {
-          option,
-        },
-      });
-      dispatch({
-        type: actions.SWITCH_VISIBILITY,
-      });
+      changeOptionSelectionDispatcher(dispatch, option);
+      switchDropdownVisibilityDispatcher(dispatch);
     };
   }
 
