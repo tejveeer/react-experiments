@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 export default function Experiment() {
   return (
-    <div className="mx-auto flex w-3/4 gap-4 p-4">
+    <div className="h-full mx-auto flex w-3/4 gap-4 p-4">
       <div className="">
-        <h1>Heading 1</h1>
+        <h1 className="mt-0">Heading 1</h1>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Non cupiditate
         nulla, aliquid perferendis nihil aut, numquam iste, eos consequuntur
         odit tempora illo ipsa quo esse dicta labore debitis necessitatibus
@@ -60,7 +60,7 @@ function Sidebar() {
   }, []);
 
   return (
-    <div className="sticky top-4 flex h-min min-w-max flex-col gap-1 border-solid border-y-0 border-r-0 px-2">
+    <div className="sticky top-4 flex h-min min-w-max flex-col gap-1 border-y-0 border-r-0 border-solid px-2">
       {headings.map((heading) => (
         <div>{heading}</div>
       ))}

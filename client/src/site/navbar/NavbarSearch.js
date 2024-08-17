@@ -81,18 +81,29 @@ export function NavbarSearch() {
 
   return (
     <>
-      <DropdownModal
-        state={folderState}
-        dispatch={folderDispatch}
-        onDropdownClick={onFolderDropdownClick}
-        onSelectOption={selectFolderOption}
-      />
-      <DropdownModal
-        state={fileState}
-        dispatch={fileDispatch}
-        onDropdownClick={onFileDropdownClick}
-        onSelectOption={selectFileOption}
-      />
+      <div className="flex absolute left-1/2 top-0 -translate-x-1/2 gap-2">
+        <div className="flex flex-col justify-center text-[1.4rem] font-bold">
+          ~
+        </div>
+        <div className="flex flex-col justify-center text-[1.4rem] font-bold">
+          /
+        </div>
+        <DropdownModal
+          state={folderState}
+          dispatch={folderDispatch}
+          onDropdownClick={onFolderDropdownClick}
+          onSelectOption={selectFolderOption}
+        />
+        <div className="flex flex-col justify-center text-[1.4rem] font-bold">
+          /
+        </div>
+        <DropdownModal
+          state={fileState}
+          dispatch={fileDispatch}
+          onDropdownClick={onFileDropdownClick}
+          onSelectOption={selectFileOption}
+        />
+      </div>
     </>
   );
 }

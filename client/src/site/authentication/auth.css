@@ -1,6 +1,4 @@
-body {
-  margin: 0;
-}
+
 
 .parent {
   display: flex;
@@ -8,7 +6,7 @@ body {
   justify-content: center;
   align-items: center;
 
-  height: 100vh;
+  height: 100%;
 }
 
 .parent > form {

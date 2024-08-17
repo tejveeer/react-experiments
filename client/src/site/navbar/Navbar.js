@@ -17,15 +17,13 @@ export default function Navbar() {
     <>
       <div
         id="nav"
-        className={`${!show ? "hidden" : ""} border-[2px] border-x-0 border-t-0 border-solid border-teal-600 bg-teal-500 px-1 opacity-60`}
+        className={`${!show ? "hidden" : ""} relative h-[26px] flex-shrink-0 border-[2px] border-x-0 border-t-0 border-solid border-teal-600 bg-teal-500 px-1 opacity-60`}
       >
-        <ul className="flex w-full list-none justify-between p-0">
-          <li>User ({user.name})</li>
-          <li className="flex gap-2">
-            <NavbarSearch />
-          </li>
-          <li>Test</li>
+        <ul className="hidden w-full list-none justify-between p-0 md:flex">
+          <li className="self-center">User ({user.name})</li>
+          <li className="self-center">Logout</li>
         </ul>
+        <NavbarSearch />
       </div>
     </>
   );
