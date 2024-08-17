@@ -1,29 +1,22 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "./utils/UserContext";
-import { useDropdownState, DropdownModal } from "./home/utils/DropdownModal";
+import {
+  useDropdownState,
+  DropdownModal,
+} from "../utils/dropdown/DropdownModal";
 
-import _ from "lodash-es";
-
-import { useLocation } from "react-router-dom";
-import { useQCache } from "./utils/categoriesUtils";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQCache } from "../utils/categoriesUtils";
 import {
   changeOptionSelectionDispatcher,
   initializeOptionsDispatcher,
   switchDropdownVisibilityDispatcher,
   switchOptionsVisibilityDispatcher,
-} from "./home/utils/dropdownDispatcher";
+} from "../utils/dropdown/dropdownDispatcher";
+import { useEffect } from "react";
 
-export default function Navbar() {
-  const { user } = useContext(UserContext);
-  const [show, setShow] = useState(true);
-
-  useShortcut({
-    shortcut: ["alt", "shift", "A"],
-    onShortcut: () => setShow((show) => !show),
-  });
-
+export function NavbarSearch() {
   const location = useLocation();
   const importablePaths = useQCache("importable-paths");
+  const navigate = useNavigate();
 
   const [folderState, folderDispatch] = useDropdownState(null);
   const [fileState, fileDispatch] = useDropdownState(null);
@@ -43,12 +36,6 @@ export default function Navbar() {
       .map((path) => path.split("/")[1].replace(".js", ""));
 
     switchOptionsVisibilityDispatcher(fileDispatch, correspondingFolderFiles);
-    changeOptionSelectionDispatcher(folderDispatch, option);
-    switchDropdownVisibilityDispatcher(folderDispatch);
-  }
-
-  function onFolderDropdownClick() {
-    if (fileState.options.length === 0 || fileState.visible) return;
 
     const fileSelections = fileState.options.filter(
       (option) => option.selected,
@@ -58,10 +45,31 @@ export default function Navbar() {
       changeOptionSelectionDispatcher(fileDispatch, option);
     }
 
+    changeOptionSelectionDispatcher(folderDispatch, option);
     switchDropdownVisibilityDispatcher(folderDispatch);
   }
+
+  function selectFileOption(option) {
+    changeOptionSelectionDispatcher(fileDispatch, option);
+    switchDropdownVisibilityDispatcher(fileDispatch);
+    const [{ option: selectedFolder }] = folderState.options.filter(
+      (option) => option.selected,
+    );
+
+    navigate(`/${selectedFolder}/${option}`);
+  }
+
+  function onFolderDropdownClick() {
+    if (fileState.options.length === 0 || fileState.visible) {
+      switchDropdownVisibilityDispatcher(fileDispatch);
+    }
+    switchDropdownVisibilityDispatcher(folderDispatch);
+  }
+
   function onFileDropdownClick() {
-    if (folderState.options.length === 0 || folderState.visible) return;
+    if (folderState.options.length === 0 || folderState.visible) {
+      switchDropdownVisibilityDispatcher(folderDispatch);
+    }
 
     const folderSelections = folderState.options.filter(
       (option) => option.selected,
@@ -73,28 +81,18 @@ export default function Navbar() {
 
   return (
     <>
-      <div
-        id="nav"
-        className={`${!show ? "hidden" : ""} border-[2px] border-x-0 border-t-0 border-solid border-teal-600 bg-teal-500 px-1 opacity-60`}
-      >
-        <ul className="flex w-full list-none justify-between p-0">
-          <li>User ({user.name})</li>
-          <li className="flex gap-2">
-            <DropdownModal
-              state={folderState}
-              dispatch={folderDispatch}
-              onDropdownClick={onFolderDropdownClick}
-              onSelectOption={selectFolderOption}
-            />
-            <DropdownModal
-              state={fileState}
-              dispatch={fileDispatch}
-              onDropdownClick={onFileDropdownClick}
-            />
-          </li>
-          <li>Test</li>
-        </ul>
-      </div>
+      <DropdownModal
+        state={folderState}
+        dispatch={folderDispatch}
+        onDropdownClick={onFolderDropdownClick}
+        onSelectOption={selectFolderOption}
+      />
+      <DropdownModal
+        state={fileState}
+        dispatch={fileDispatch}
+        onDropdownClick={onFileDropdownClick}
+        onSelectOption={selectFileOption}
+      />
     </>
   );
 }
@@ -126,47 +124,20 @@ function usePathOptionsInitialier(
       });
     });
 
+    const correspondingFolderFiles = importablePaths
+      .filter((path) => path.includes(currentFolder))
+      .map((path) => path.split("/")[1].replace(".js", ""));
+
     let fileOptions = [];
     files.forEach((file) => {
       fileOptions.push({
         option: file,
         selected: file === currentFile,
+        visible: correspondingFolderFiles.includes(file),
       });
     });
 
     initializeOptionsDispatcher(folderDispatch, folderOptions);
     initializeOptionsDispatcher(fileDispatch, fileOptions);
   }, [importablePaths, location]);
-}
-
-function useShortcut({ shortcut, onShortcut }) {
-  const keyMapping = {
-    shift: "shiftKey",
-    alt: "altKey",
-    ctrl: "ctrlKey",
-  };
-
-  useEffect(() => {
-    function keyDown(e) {
-      const isKey = _.every(
-        shortcut.map((k) => {
-          if (k.length === 1) {
-            return e.key === k;
-          }
-
-          return e[keyMapping[k]];
-        }),
-      );
-
-      if (isKey) {
-        onShortcut();
-      }
-    }
-
-    document.addEventListener("keydown", keyDown);
-
-    return () => {
-      document.removeEventListener("keydown", keyDown);
-    };
-  });
 }

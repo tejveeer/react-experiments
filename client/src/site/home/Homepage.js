@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { useCategoriesInformation, useGet } from "../utils/categoriesUtils";
+import { useCategoriesInformation } from "../utils/categoriesUtils";
 import { UserContext } from "../utils/UserContext";
 
 import MarkdownView from "react-showdown";

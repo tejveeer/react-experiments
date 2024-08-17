@@ -6,7 +6,7 @@ import Homepage from "./home/Homepage";
 import Login from "./authentication/Login";
 import Register from "./authentication/Register";
 import Main from "./authentication/Mainpage";
-import Navbar from "./Navbar";
+import Navbar from "./navbar/Navbar";
 
 import { useImportablePaths } from "./utils/categoriesUtils";
 import Cookies from "js-cookie";
