@@ -8,6 +8,7 @@ const toBoolArr = (arr) =>
   `{${arr.map((val) => (val ? 'true' : 'false')).join(', ')}}`;
 
 router.get('/', async (req, res) => {
+  console.log('called /todolist', req.cookies);
   // should also have middleware for this
   if (!req.cookies?.user) {
     return res.status(400).end();

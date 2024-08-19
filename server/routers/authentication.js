@@ -22,7 +22,7 @@ router.post("/login", async (req, res) => {
 
     res.cookie("user", JSON.stringify(data), {
       sameSite: "None",
-      // secure: true,
+      secure: true,
     });
     res.status(200).json(data);
   }

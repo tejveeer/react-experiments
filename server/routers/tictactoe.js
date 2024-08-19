@@ -1,9 +1,9 @@
-const sql = require("../utils/db");
-const express = require("express");
+const sql = require('../utils/db');
+const express = require('express');
 const router = express.Router();
 
 // saves
-router.post("/save-histories", async (req, res) => {
+router.post('/save-histories', async (req, res) => {
   // there should be middleware for all of this
   if (!req.cookies?.user) {
     return res.status(400).end();
@@ -29,7 +29,7 @@ router.post("/save-histories", async (req, res) => {
   }
 });
 
-router.post("/delete-histories", async (req, res) => {
+router.post('/delete-histories', async (req, res) => {
   if (!req.cookies?.user) {
     return res.status(400);
   }
@@ -48,7 +48,7 @@ router.post("/delete-histories", async (req, res) => {
   }
 });
 
-router.get("/get-histories", async (req, res) => {
+router.get('/get-histories', async (req, res) => {
   if (!req.cookies?.user) {
     return res.status(400);
   }
@@ -61,10 +61,10 @@ router.get("/get-histories", async (req, res) => {
         where user_id=${userId}
     `;
 
-    res.status(200).send(result.map((val) => [val["id"], val["game_history"]]));
+    res.status(200).send(result.map((val) => [val['id'], val['game_history']]));
   } catch (error) {
     res.status(400);
-  } 
+  }
 });
 
 module.exports = router;

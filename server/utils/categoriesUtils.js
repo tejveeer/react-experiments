@@ -2,14 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../../client/src/categories') + '/';
-const AUTH_PATH = path.resolve(
-  __dirname,
-  '../../client/src/site/',
-);
 
 function _isPathFolder(path) {
   const pathInfo = fs.statSync(path);
   return !pathInfo.isFile();
+}
+
+function _createDateFromDateString(dateString) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
 function _getFolderInformationFromReadme(readmePath) {
@@ -19,7 +20,7 @@ function _getFolderInformationFromReadme(readmePath) {
     .split('\n')
     .filter((it) => it.includes('date'))[0]
     .split(':')[1];
-  const date = dateString !== '' ? new Date(dateString) : null;
+  const date = dateString !== '' ? _createDateFromDateString(dateString) : null;
 
   const barSplit = fileHandler.split('---');
   const descriptionString = barSplit[barSplit.length - 1];
@@ -140,8 +141,8 @@ function _getImportablePaths(root) {
 }
 
 function getImportablePaths() {
-  return _getImportablePaths(ROOT).map((absFilePath) =>
-    path.relative(AUTH_PATH, absFilePath),
+  return _getImportablePaths(ROOT).map((path) =>
+    path.split('/categories/')[1].replace('/index.js', ''),
   );
 }
 
