@@ -13,6 +13,11 @@ import {
 } from "../utils/dropdown/dropdownDispatcher";
 import { useEffect } from "react";
 
+const folderDropdownStyles = {
+  currentlySelectedStyles: () => {},
+};
+const fileDropdownStyles = {};
+
 export function NavbarSearch() {
   const location = useLocation();
   const importablePaths = useQCache("importable-paths");
@@ -81,7 +86,7 @@ export function NavbarSearch() {
 
   return (
     <>
-      <div className="flex absolute left-1/2 top-0 -translate-x-1/2 gap-2">
+      <div className="absolute left-1/2 top-0 flex -translate-x-1/2 gap-2">
         <div className="flex flex-col justify-center text-[1.4rem] font-bold">
           ~
         </div>
