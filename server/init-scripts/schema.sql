@@ -15,3 +15,14 @@ CREATE TABLE users(
     PRIMARY KEY(id)
 );
 CREATE UNIQUE INDEX users_email_key ON users USING btree ("email");
+
+CREATE TABLE tasks(
+    id uuid NOT NULL,
+    user_id integer NOT NULL,
+    title text NOT NULL,
+    description text NOT NULL,
+    days boolean[] NOT NULL,
+    repeating_time text NOT NULL,
+    repeating boolean NOT NULL,
+    PRIMARY KEY(id)
+);
