@@ -68,7 +68,8 @@ export function DropdownModal({
   onDropdownClick = null,
   currentlySelectedStyles = null,
   optionsContainerStyles = null,
-  optionStyles = null
+  optionStyles = null,
+  defaultCurrentlySelectedValue = "..."
 }) {
   if (!onDropdownClick) {
     onDropdownClick = () => switchDropdownVisibilityDispatcher(dispatch);
@@ -77,7 +78,7 @@ export function DropdownModal({
 
   let currentlySelectedOption;
   if (filteredOptions.length === 0) {
-    currentlySelectedOption = "...";
+    currentlySelectedOption = defaultCurrentlySelectedValue;
   } else {
     const [{ option }] = filteredOptions;
     currentlySelectedOption = option;
@@ -132,7 +133,7 @@ function Options({
   dispatch,
   onSelectOption,
   optionsContainerStyles = null,
-  optionStyles = null
+  optionStyles = null,
 }) {
   if (!onSelectOption) {
     onSelectOption = (option) => {

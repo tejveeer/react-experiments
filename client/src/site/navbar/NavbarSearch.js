@@ -3,7 +3,7 @@ import {
   DropdownModal,
 } from "../utils/dropdown/DropdownModal";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQCache } from "../utils/categoriesUtils";
 import {
   changeOptionSelectionDispatcher,
@@ -11,15 +11,16 @@ import {
   switchDropdownVisibilityDispatcher,
   switchOptionsVisibilityDispatcher,
 } from "../utils/dropdown/dropdownDispatcher";
+
 import { useEffect } from "react";
 
-const folderDropdownStyles = {
-  currentlySelectedStyles: () => {},
+const dropdownStyles = {
+  currentlySelectedStyles: `bg-teal-700 text-sm rounded-lg px-3 font-bold text-stone-300 hover:bg-teal-800`,
+  optionsContainerStyles: `max-w-[150px] gap-1 rounded-lg bg-slate-200 p-1`,
+  optionStyles: `rounded-lg px-3 duration-300 hover:bg-slate-400`,
 };
-const fileDropdownStyles = {};
 
-export function NavbarSearch() {
-  const location = useLocation();
+export function NavbarSearch({ location }) {
   const importablePaths = useQCache("importable-paths");
   const navigate = useNavigate();
 
@@ -79,18 +80,24 @@ export function NavbarSearch() {
     const folderSelections = folderState.options.filter(
       (option) => option.selected,
     );
-    if (folderSelections.length === 0) return;
+    if (folderSelections.length === 0) {
+      return;
+    }
 
     switchDropdownVisibilityDispatcher(fileDispatch);
   }
 
   return (
     <>
-      <div className="absolute left-1/2 top-0 flex -translate-x-1/2 gap-2">
-        <div className="flex flex-col justify-center text-[1.4rem] font-bold">
+      <div className="absolute left-1/2 top-0 flex max-h-min -translate-x-1/2 items-center gap-1">
+        <div
+          className="flex cursor-pointer flex-col justify-center text-base font-bold"
+          onClick={() => navigate("/homepage")}
+          title="Go to homepage"
+        >
           ~
         </div>
-        <div className="flex flex-col justify-center text-[1.4rem] font-bold">
+        <div className="flex flex-col justify-center text-base font-bold">
           /
         </div>
         <DropdownModal
@@ -98,8 +105,12 @@ export function NavbarSearch() {
           dispatch={folderDispatch}
           onDropdownClick={onFolderDropdownClick}
           onSelectOption={selectFolderOption}
+          currentlySelectedStyles={dropdownStyles.currentlySelectedStyles}
+          optionsContainerStyles={dropdownStyles.optionsContainerStyles}
+          optionStyles={dropdownStyles.optionStyles}
+          defaultCurrentlySelectedValue="Folder"
         />
-        <div className="flex flex-col justify-center text-[1.4rem] font-bold">
+        <div className="flex flex-col justify-center text-base font-bold">
           /
         </div>
         <DropdownModal
@@ -107,6 +118,10 @@ export function NavbarSearch() {
           dispatch={fileDispatch}
           onDropdownClick={onFileDropdownClick}
           onSelectOption={selectFileOption}
+          currentlySelectedStyles={dropdownStyles.currentlySelectedStyles}
+          optionsContainerStyles={dropdownStyles.optionsContainerStyles}
+          optionStyles={dropdownStyles.optionStyles}
+          defaultCurrentlySelectedValue="File"
         />
       </div>
     </>
