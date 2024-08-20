@@ -37,9 +37,8 @@ export default function Navbar() {
 
   return (
     <>
-      <div
-        id="nav"
-        className={`${!show ? "hidden" : ""} relative flex h-[26px] flex-shrink-0 bg-teal-500 px-1 opacity-60`}
+      <nav
+        className={`${!show ? "hidden" : ""} relative z-10 flex h-[26px] flex-shrink-0 bg-teal-500/60 px-1`}
       >
         <ul className="hidden w-full list-none justify-between p-0 text-sm text-black sm:flex">
           <li className="self-center px-1">
@@ -48,7 +47,7 @@ export default function Navbar() {
             )
           </li>
           <li
-            className="cursor-pointer self-center rounded-md px-1 duration-200 hover:bg-teal-600"
+            className="cursor-pointer opacity-100 self-center rounded-md px-1 duration-200 hover:bg-teal-600/60"
             onClick={logout}
           >
             Logout
@@ -57,7 +56,7 @@ export default function Navbar() {
         {location.pathname !== "/homepage" && user.name ? (
           <NavbarSearch location={location} />
         ) : null}
-      </div>
+      </nav>
     </>
   );
 }

@@ -25,7 +25,7 @@ export default function App() {
     <UserContext.Provider value={{ user, setUser }}>
       <div className="relative flex h-full flex-col">
         <Navbar />
-        <div className="flex-grow">
+        <div className="z-0 flex-grow">
           <Routes>
             <Route path="/" element={<Main />}></Route>
             <Route path="/login" element={<Login />}></Route>

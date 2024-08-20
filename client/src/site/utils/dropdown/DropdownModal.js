@@ -69,7 +69,7 @@ export function DropdownModal({
   currentlySelectedStyles = null,
   optionsContainerStyles = null,
   optionStyles = null,
-  defaultCurrentlySelectedValue = "..."
+  defaultCurrentlySelectedValue = "...",
 }) {
   if (!onDropdownClick) {
     onDropdownClick = () => switchDropdownVisibilityDispatcher(dispatch);
@@ -86,7 +86,7 @@ export function DropdownModal({
 
   return (
     <>
-      <div className="relative">
+      <div className="relative w-min select-none">
         <CurrentlySelected
           content={currentlySelectedOption}
           onClick={onDropdownClick}
@@ -119,7 +119,7 @@ function CurrentlySelected({
       <div
         title={content}
         onClick={onClick}
-        className={`max-w-[200px] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap transition duration-100 ${currentlySelectedStyles}`}
+        className={`w-min max-w-[200px] cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap transition duration-100 ${currentlySelectedStyles}`}
       >
         {content}
       </div>
@@ -149,7 +149,7 @@ function Options({
   return (
     <>
       <div
-        className={`${!visible ? "hidden" : ""} absolute left-1/2 top-[130%] flex w-max -translate-x-1/2 flex-col ${optionsContainerStyles}`}
+        className={`${!visible ? "hidden" : ""} z-20 absolute left-1/2 top-[130%] flex w-max -translate-x-1/2 flex-col ${optionsContainerStyles}`}
       >
         {options.map((obj, idx) =>
           obj?.visible === undefined || obj?.visible ? (

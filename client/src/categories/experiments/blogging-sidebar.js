@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function Experiment() {
   return (
-    <div className="h-full mx-auto flex w-3/4 gap-4 p-4">
+    <div className="relative mx-auto flex h-full w-3/4 gap-4 p-4">
       <div className="">
         <h1 className="mt-0">Heading 1</h1>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Non cupiditate

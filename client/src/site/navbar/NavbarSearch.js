@@ -15,7 +15,7 @@ import {
 import { useEffect } from "react";
 
 const dropdownStyles = {
-  currentlySelectedStyles: `bg-teal-700 text-sm rounded-lg px-3 font-bold text-stone-300 hover:bg-teal-800`,
+  currentlySelectedStyles: `bg-teal-700/60 opacity-100 text-sm rounded-lg px-3 font-bold text-stone-300 hover:bg-teal-800`,
   optionsContainerStyles: `max-w-[150px] gap-1 rounded-lg bg-slate-200 p-1`,
   optionStyles: `rounded-lg px-3 duration-300 hover:bg-slate-400`,
 };

@@ -31,7 +31,7 @@ const Experiment = () => {
 
   return (
     <div
-      className='relative h-64 overflow-y-scroll'
+      className='h-64 overflow-y-scroll'
       ref={scrollRef}
     >
       <div className='p-4'>
