@@ -27,6 +27,7 @@ export default function Homepage() {
               key={idx}
               categoryName={key}
               category={catInfo[key]}
+              currentlyOpenedCategory={currentlyOpenedCategory}
               setCurrentlyOpenedCategory={setCurrentlyOpenedCategory}
             />
           ))}
@@ -56,11 +57,11 @@ function Loading() {
 function Category({
   categoryName,
   category,
+  currentlyOpenedCategory,
   setCurrentlyOpenedCategory,
   previousName = null,
   d = 0,
 }) {
-  const [toggle, setToggle] = useState(false);
   const [isOnCategoryName, setIsOnCategoryName] = useState(false);
   const [isViewingDescription, setIsViewingDescription] = useState(false);
 
@@ -74,12 +75,21 @@ function Category({
   }
 
   const onClickToggle = () => {
-    setToggle((toggle) => !toggle);
+    setCurrentlyOpenedCategory((category) => {
+      if (category === categoryName) {
+        return undefined;
+      }
+      return categoryName;
+    });
     if (d === 0) {
       setIsViewingDescription((isViewingDescription) => !isViewingDescription);
     }
   };
 
+  const show = currentlyOpenedCategory === categoryName;
+  if (currentlyOpenedCategory === categoryName) {
+    console.log(categoryName, show);
+  }
   return (
     <>
       <div className={`${d === 1 ? "ml-2" : ""} mb-2 flex justify-between`}>
@@ -89,7 +99,7 @@ function Category({
               route={`/${previousName}/${categoryName.replace(".js", "")}`}
             />
           ) : (
-            <Toggle toggle={toggle} onClick={onClickToggle} />
+            <Toggle toggle={show} onClick={onClickToggle} />
           )}
           <CategoryName
             d={d}
@@ -106,12 +116,12 @@ function Category({
         <span className="text-sm italic">{creationDate}</span>
       </div>
       <div className="flex flex-col">
-        {isViewingDescription && hasDescription && (
+        {show && isViewingDescription && hasDescription && (
           <CategoryDescription
             mdDescription={hasDescription ? category.meta.description : ""}
           />
         )}
-        {toggle &&
+        {show &&
           Object.keys(category.folders).map((key, idx) => {
             return category.folders[key].hasIndex ? (
               <Category
@@ -123,7 +133,7 @@ function Category({
               />
             ) : null;
           })}
-        {toggle &&
+        {show &&
           category.files.map((key, idx) => (
             <Category
               key={idx}
