@@ -13,6 +13,8 @@ export default function Homepage() {
   const { isLoading, data: catInfo } = useCategoriesInformation();
   const { user } = useContext(UserContext);
 
+  const [currentlyOpenedCategory, setCurrentlyOpenedCategory] = useState(null);
+
   return (
     <div className="mx-auto w-2/3">
       <p>Hey {user.name}, the following projects are available for your use:</p>
@@ -21,7 +23,12 @@ export default function Homepage() {
       ) : (
         <div>
           {Object.keys(catInfo).map((key, idx) => (
-            <Category key={idx} categoryName={key} category={catInfo[key]} />
+            <Category
+              key={idx}
+              categoryName={key}
+              category={catInfo[key]}
+              setCurrentlyOpenedCategory={setCurrentlyOpenedCategory}
+            />
           ))}
         </div>
       )}
@@ -46,7 +53,13 @@ function Loading() {
   );
 }
 
-function Category({ categoryName, category, previousName = null, d = 0 }) {
+function Category({
+  categoryName,
+  category,
+  setCurrentlyOpenedCategory,
+  previousName = null,
+  d = 0,
+}) {
   const [toggle, setToggle] = useState(false);
   const [isOnCategoryName, setIsOnCategoryName] = useState(false);
   const [isViewingDescription, setIsViewingDescription] = useState(false);

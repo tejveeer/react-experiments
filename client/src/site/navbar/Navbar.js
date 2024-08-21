@@ -6,27 +6,27 @@ import _ from "lodash-es";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 
+const toBool = (val) =>
+  val === "true" ? true : val === "false" ? false : undefined;
+
 export default function Navbar() {
   const location = useLocation();
 
   const { user, setUser } = useContext(UserContext);
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(() => {
+    const showNavbar = toBool(Cookies.get("show-navbar"));
+    if (showNavbar === undefined) {
+      return true;
+    }
+    return showNavbar;
+  });
 
   useShortcut({
     shortcut: ["alt", "shift", "A"],
     onShortcut: () =>
       setShow((show) => {
-        const navbarShow = Boolean(Cookies.get("navbar-show"));
-        console.log("cookies.get", navbarShow);
-        if (navbarShow === undefined) {
-          Cookies.set("navbar-show", !show);
-          console.log("undefined", !show);
-          return !show;
-        } else {
-          Cookies.set("navbar-show", !navbarShow);
-          console.log("defined", Cookies.get("navbar-show"));
-          return !navbarShow;
-        }
+        Cookies.set("show-navbar", !show);
+        return !show;
       }),
   });
 
@@ -47,7 +47,7 @@ export default function Navbar() {
             )
           </li>
           <li
-            className="cursor-pointer opacity-100 self-center rounded-md px-1 duration-200 hover:bg-teal-600/60"
+            className="cursor-pointer self-center rounded-md px-1 opacity-100 duration-200 hover:bg-teal-600/60"
             onClick={logout}
           >
             Logout
