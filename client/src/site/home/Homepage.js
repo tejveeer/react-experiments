@@ -86,10 +86,13 @@ function Category({
     }
   };
 
-  const show = currentlyOpenedCategory === categoryName;
-  if (currentlyOpenedCategory === categoryName) {
-    console.log(categoryName, show);
+  let show;
+  if (isViewingDescription && d === 1) {
+    show = true;
+  } else {
+    show = currentlyOpenedCategory === categoryName;
   }
+
   return (
     <>
       <div className={`${d === 1 ? "ml-2" : ""} mb-2 flex justify-between`}>
