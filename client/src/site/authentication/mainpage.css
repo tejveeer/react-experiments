@@ -27,6 +27,7 @@ ul {
 ::-webkit-scrollbar {
   width: 10px;
   background-color: orange;
+  position: absolute;
 }
 
 ::-webkit-scrollbar-thumb {
