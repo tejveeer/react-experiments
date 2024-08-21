@@ -1,11 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       fontFamily: {
-        Outline: ["Outline", "italic"]
-      }
+        outfit: ["Outfit"],
+        redhat: ["Red Hat Text"],
+      },
     },
   },
   plugins: [],
