@@ -76,13 +76,46 @@ function AdvancedSettingsDisplay() {
 }
 
 function AdvancedSettings({ show }) {
+  const { register } = useFormContext();
   return (
     <>
       <ExistentialTransition
         trigger={show}
-        innerStyles={`rounded-md my-1 bg-slate-300 [&_*]:p-3`}
+        innerStyles={`rounded-md my-1 bg-slate-300`}
       >
-        <div className="text-sm">This has some content now</div>
+        <div className="grid grid-cols-[auto_auto] gap-y-2 p-3 text-sm">
+          {/* Questions Amount */}
+          <label className="self-center font-semibold leading-4">
+            Questions Amount
+          </label>
+          <input
+            className="h-min w-1/4 self-center justify-self-end rounded-md border-none px-1 text-center focus:outline-none"
+            type="text"
+          />
+          {/* Timer */}
+          <label className="self-center font-semibold leading-4">
+            Timer (s)
+          </label>
+          <input
+            className="h-min w-1/4 self-center justify-self-end rounded-md border-none px-1 text-center focus:outline-none"
+            type="text"
+          />
+          {/* Number Range */}
+          <label className="self-center font-semibold leading-4">
+            Number Range
+          </label>
+          <div className="grid grid-cols-3">
+            <input
+              className="h-min self-center rounded-md border-none px-1 text-center focus:outline-none"
+              type="text"
+            />
+            <span className="flex justify-center items-center font-semibold">&rarr;</span>
+            <input
+              className="h-min col-start-3 rounded-md border-none px-1 text-center focus:outline-none"
+              type="text"
+            />
+          </div>
+        </div>
       </ExistentialTransition>
     </>
   );

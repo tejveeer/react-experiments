@@ -3,10 +3,7 @@ import Game from "./components/Game";
 import Initializer from "./components/Initializer";
 
 export default function MathventoryPage() {
-  const methods = useForm({
-    mode: "onSubmit",
-    reValidateMode: "onSubmit"
-  });
+  const methods = useForm();
   return (
     <>
       <FormProvider {...methods}>
