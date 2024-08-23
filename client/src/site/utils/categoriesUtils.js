@@ -7,6 +7,7 @@ export function useQGet(storageName, url) {
   const { isLoading, data } = useQuery({
     queryKey: [storageName],
     queryFn: () => axios.get(url).then((res) => res.data),
+    staleTime: Infinity
   });
   return { isLoading, data };
 }

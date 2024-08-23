@@ -1,55 +1,52 @@
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 
-const MyComponent = () => {
-  const [showOptions, setShowOptions] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Option 1");
+function MyForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
-  };
-
-  const handleOptionClick = (option) => {
-    setSelectedOption(option);
-    setShowOptions(false);
+  const onSubmit = (data) => {
+    console.log("Form Data:", data);
   };
 
   return (
-    <div className="flex h-full items-center justify-center">
-      <div className="relative">
-        <div
-          onClick={toggleOptions}
-          className="cursor-pointer rounded-md bg-blue-500 p-4 text-white"
-        >
-          {selectedOption}
-        </div>
-
-        {showOptions && (
-          <div className="absolute left-1/2 top-[120%] -translate-x-1/2 rounded-md bg-gray-100 p-4 shadow-lg">
-            <ul className="space-y-2">
-              <li
-                onClick={() => handleOptionClick("Option 1")}
-                className="cursor-pointer rounded-md p-2 hover:bg-blue-200"
-              >
-                Option 1
-              </li>
-              <li
-                onClick={() => handleOptionClick("Option 2")}
-                className="cursor-pointer rounded-md p-2 hover:bg-blue-200"
-              >
-                Option 2
-              </li>
-              <li
-                onClick={() => handleOptionClick("Option 3")}
-                className="cursor-pointer rounded-md p-2 hover:bg-blue-200"
-              >
-                Option 3
-              </li>
-            </ul>
-          </div>
-        )}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            {...register("options", {
+              validate: (value) => value && value.length > 0 || "At least one option must be selected"
+            })}
+            value="option1"
+          />
+          Option 1
+        </label>
       </div>
-    </div>
-  );
-};
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            {...register("options")}
+            value="option2"
+          />
+          Option 2
+        </label>
+      </div>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            {...register("options")}
+            value="option3"
+          />
+          Option 3
+        </label>
+      </div>
 
-export default MyComponent;
+      {errors.options && <p>{errors.options.message}</p>}
+
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+export default MyForm;
