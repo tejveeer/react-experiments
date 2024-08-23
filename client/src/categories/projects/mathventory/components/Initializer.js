@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { ExistentialTransition } from "../utils";
 
 export default function Initializer() {
   return (
@@ -77,28 +78,39 @@ function AdvancedSettingsDisplay() {
 function AdvancedSettings({ show }) {
   return (
     <>
-      <div
-        className={`grid ${show ? "mt-2 grid-rows-[1fr]" : "grid-rows-[0fr]"} transition-all duration-300 ease-in-out`}
+      <ExistentialTransition
+        trigger={show}
+        innerStyles={`rounded-md my-1 bg-slate-300 [&_*]:p-3`}
       >
-        <div className="overflow-hidden rounded-md bg-slate-300 [&_*]:p-3">
-          <div></div>
-        </div>
-      </div>
+        <div className="text-sm">This has some content now</div>
+      </ExistentialTransition>
     </>
   );
 }
 
 function ErrorMessage() {
+  const [error, setError] = useState("");
+
   const {
     formState: { errors },
   } = useFormContext();
   const hasErrors = Object.keys(errors).length !== 0;
-  
+
+  useEffect(() => {
+    if (hasErrors) {
+      setError(errors.operations.message);
+    }
+  }, [hasErrors, errors]);
+
   return (
     <>
-      <div className={`${!hasErrors ? "hidden" : ""} text-sm my-1 bg-red-300/70 p-1 text-center leading-4 rounded-lg text-red-700/80 font-semibold border-dashed border-red-400`}>
-        {errors?.operations?.message}
-      </div>
+      <ExistentialTransition trigger={hasErrors}>
+        <div
+          className={`rounded-lg border-dashed border-red-400 bg-red-300/70 p-1 text-center text-sm font-semibold leading-4 text-red-700/80`}
+        >
+          {error}
+        </div>
+      </ExistentialTransition>
     </>
   );
 }
